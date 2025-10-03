@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Features - OpenFinOps</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        .features-page {
+            padding: 120px 0 80px;
+        }
+
+        .feature-section {
+            padding: 60px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .feature-section:last-child {
+            border-bottom: none;
+        }
+
+        .feature-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .feature-content.reverse {
+            direction: rtl;
+        }
+
+        .feature-content.reverse > * {
+            direction: ltr;
+        }
+
+        .feature-text h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-text p {
+            color: var(--text-secondary);
+            font-size: 1.125rem;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-list {
+            list-style: none;
+            margin: 2rem 0;
+        }
+
+        .feature-list li {
+            display: flex;
+            align-items: start;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+        }
+
+        .feature-list i {
+            color: var(--primary-color);
+            font-size: 1.25rem;
+            margin-top: 0.25rem;
+        }
+
+        .feature-visual {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .feature-visual i {
+            font-size: 5rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .feature-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: rgba(0, 212, 170, 0.2);
+            color: var(--primary-color);
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .feature-content {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-wrapper">
+                <div class="logo">
+                    <i class="fas fa-chart-line"></i>
+                    <span>OpenFinOps</span>
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="features.html" class="active">Features</a></li>
+                    <li><a href="documentation.html">Documentation</a></li>
+                    <li><a href="api.html">API Reference</a></li>
+                    <li><a href="demo.html" class="demo-btn">Live Demo</a></li>
+                    <li><a href="https://github.com/rdmurugan/openfinops" target="_blank"><i class="fab fa-github"></i></a></li>
+                </ul>
+                <div class="mobile-menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Features Page -->
+    <div class="features-page">
+        <div class="container">
+            <div class="section-header">
+                <h1 style="font-size: 3.5rem;">Comprehensive FinOps Features</h1>
+                <p>Everything you need for AI/ML cost intelligence and optimization</p>
+            </div>
+
+            <!-- AI/ML Cost Tracking -->
+            <section id="ai-ml" class="feature-section">
+                <div class="feature-content">
+                    <div class="feature-text">
+                        <span class="feature-badge">CORE FEATURE</span>
+                        <h2>AI/ML Cost Tracking</h2>
+                        <p>
+                            Get complete visibility into your AI/ML infrastructure costs. Track training expenses,
+                            inference costs, and model performance metrics in real-time.
+                        </p>
+                        <ul class="feature-list">
+                            <li>
+                                <i class="fas fa-check-circle"></i>
+                                <div>
+                                    <strong>LLM Training Monitoring</strong><br>
+                                    Track costs per training job, GPU utilization, and training duration
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fas fa-check-circle"></i>
+                                <div>
+                                    <strong>Inference Cost Analysis</strong><br>
+                                    Monitor API usage, token consumption, and cost per request
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fas fa-check-circle"></i>
+                                <div>
+                                    <strong>Model Performance Metrics</strong><br>
+                                    Correlate costs with model performance and accuracy metrics
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fas fa-check-circle"></i>
+                                <div>
+                                    <strong>RAG Pipeline Analytics</strong><br>
+                                    Track embedding costs, vector database usage, and retrieval performance
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="feature-visual">
+                        <i class="fas fa-brain"></i>
+                        <h3 style="margin-top: 2rem;">Real-time AI/ML Monitoring</h3>
+                        <p style="color: var(--text-secondary); margin-top: 1rem;">
+                            Comprehensive visibility into all AI/ML workloads
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Multi-Cloud Support -->
+            <section id="multi-cloud" class="feature-section">
+                <div class="feature-content reverse">
+                    <div class="feature-text">
+                        <span class="feature-badge">ENTERPRISE READY</span>
+                        <h2>Multi-Cloud Cost Management</h2>
+                        <p>
+                            Unified cost tracking across AWS, Azure, and GCP. Consolidate all your cloud
+                            spending into a single dashboard with intelligent cost attribution.
+                        </p>
+                        <ul class="feature-list">
+                            <li>
+                                <i class="fas fa-check-circle"></i>
+                                <div>
+                                    <strong>AWS Integration</strong><br>
+                                    EC2, S3, SageMaker, Lambda, and all AWS services
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fas fa-check-circle"></i>
+                                <div>
+                                    <strong>Azure Support</strong><br>
+                                    Virtual Machines, Blob Storage, Azure ML, and Functions
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fas fa-check-circle"></i>
+                                <div>
+                                    <strong>GCP Coverage</strong><br>
+                                    Compute Engine, Cloud Storage, Vertex AI, and Cloud Functions
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fas fa-check-circle"></i>
+                                <div>
+                                    <strong>Cost Attribution</strong><br>
+                                    Tag-based allocation, department tracking, and project costing
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="feature-visual">
+                        <i class="fas fa-cloud"></i>
+                        <h3 style="margin-top: 2rem;">Unified Multi-Cloud View</h3>
+                        <p style="color: var(--text-secondary); margin-top: 1rem;">
+                            One dashboard for all your cloud providers
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Executive Dashboards -->
+            <section id="dashboards" class="feature-section">
+                <div class="feature-content">
+                    <div class="feature-text">
+                        <span class="feature-badge">ROLE-BASED</span>
+                        <h2>Executive Dashboards</h2>
+                        <p>
+                            Purpose-built dashboards for different roles in your organization. Each dashboard
+                            provides the right level of detail and metrics for decision-makers.
+                        </p>
+                        <ul class="feature-list">
+                            <li>
+                                <i class="fas fa-check-circle"></i>
+                                <div>
+                                    <strong>CFO Dashboard</strong><br>
+                                    Financial KPIs, ROI analysis, budget tracking, and cost forecasting
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fas fa-check-circle"></i>
+                                <div>
+                                    <strong>COO Dashboard</strong><br>
+                                    Operational efficiency, SLA compliance, and performance metrics
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fas fa-check-circle"></i>
+                                <div>
+                                    <strong>Infrastructure Leader</strong><br>
+                                    Resource utilization, capacity planning, and infrastructure optimization
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fas fa-check-circle"></i>
+                                <div>
+                                    <strong>Finance Analyst</strong><br>
+                                    Detailed cost breakdowns, trend analysis, and reporting tools
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="feature-visual">
+                        <i class="fas fa-chart-pie"></i>
+                        <h3 style="margin-top: 2rem;">Real-time Web Dashboards</h3>
+                        <p style="color: var(--text-secondary); margin-top: 1rem;">
+                            Beautiful, responsive dashboards with live updates
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Smart Recommendations -->
+            <section id="recommendations" class="feature-section">
+                <div class="feature-content reverse">
+                    <div class="feature-text">
+                        <span class="feature-badge">AI-POWERED</span>
+                        <h2>Smart Cost Optimization</h2>
+                        <p>
+                            AI-powered recommendations that analyze your infrastructure and suggest
+                            actionable optimizations with estimated savings.
+                        </p>
+                        <ul class="feature-list">
+                            <li>
+                                <i class="fas fa-check-circle"></i>
+                                <div>
+                                    <strong>Right-sizing Recommendations</strong><br>
+                                    Identify over-provisioned resources and suggest optimal instance sizes
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fas fa-check-circle"></i>
+                                <div>
+                                    <strong>Reserved Instance Planning</strong><br>
+                                    Analyze usage patterns and recommend RI purchases for maximum savings
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fas fa-check-circle"></i>
+                                <div>
+                                    <strong>Spot Instance Opportunities</strong><br>
+                                    Identify workloads suitable for spot instances with 70-90% savings
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fas fa-check-circle"></i>
+                                <div>
+                                    <strong>Storage Optimization</strong><br>
+                                    Lifecycle policies, tiering recommendations, and cleanup suggestions
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="feature-visual">
+                        <i class="fas fa-lightbulb"></i>
+                        <h3 style="margin-top: 2rem;">Intelligent Optimization</h3>
+                        <p style="color: var(--text-secondary); margin-top: 1rem;">
+                            Save 40% on average with AI recommendations
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Alerting & Monitoring -->
+            <section id="alerts" class="feature-section">
+                <div class="feature-content">
+                    <div class="feature-text">
+                        <span class="feature-badge">PROACTIVE</span>
+                        <h2>Intelligent Alerts & Monitoring</h2>
+                        <p>
+                            Stay ahead of budget overruns with proactive alerting and anomaly detection.
+                            Get notified before issues become costly problems.
+                        </p>
+                        <ul class="feature-list">
+                            <li>
+                                <i class="fas fa-check-circle"></i>
+                                <div>
+                                    <strong>Budget Alerts</strong><br>
+                                    Set thresholds and get notified when spending approaches limits
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fas fa-check-circle"></i>
+                                <div>
+                                    <strong>Anomaly Detection</strong><br>
+                                    ML-powered detection of unusual spending patterns and spikes
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fas fa-check-circle"></i>
+                                <div>
+                                    <strong>Performance Alerts</strong><br>
+                                    Monitor SLAs, response times, and system health
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fas fa-check-circle"></i>
+                                <div>
+                                    <strong>Multi-channel Notifications</strong><br>
+                                    Email, Slack, Teams, and webhook integrations
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="feature-visual">
+                        <i class="fas fa-bell"></i>
+                        <h3 style="margin-top: 2rem;">Proactive Monitoring</h3>
+                        <p style="color: var(--text-secondary); margin-top: 1rem;">
+                            Catch issues before they impact your budget
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Telemetry Agents -->
+            <section id="telemetry" class="feature-section">
+                <div class="feature-content reverse">
+                    <div class="feature-text">
+                        <span class="feature-badge">SCALABLE</span>
+                        <h2>Distributed Telemetry Agents</h2>
+                        <p>
+                            Deploy lightweight agents across your infrastructure for comprehensive
+                            cost data collection with minimal overhead.
+                        </p>
+                        <ul class="feature-list">
+                            <li>
+                                <i class="fas fa-check-circle"></i>
+                                <div>
+                                    <strong>AWS Telemetry Agent</strong><br>
+                                    CloudWatch integration, Cost Explorer API, and real-time metrics
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fas fa-check-circle"></i>
+                                <div>
+                                    <strong>Azure Monitor Agent</strong><br>
+                                    Azure Monitor integration, cost management API, and billing data
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fas fa-check-circle"></i>
+                                <div>
+                                    <strong>GCP Telemetry Agent</strong><br>
+                                    Cloud Monitoring integration, billing export, and usage tracking
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fas fa-check-circle"></i>
+                                <div>
+                                    <strong>Custom Agents</strong><br>
+                                    Build your own agents with our SDK and API
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="feature-visual">
+                        <i class="fas fa-satellite-dish"></i>
+                        <h3 style="margin-top: 2rem;">Enterprise-grade Telemetry</h3>
+                        <p style="color: var(--text-secondary); margin-top: 1rem;">
+                            Collect metrics from anywhere in your infrastructure
+                        </p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- CTA Section -->
+    <section class="cta">
+        <div class="container">
+            <h2>Ready to Start Optimizing?</h2>
+            <p>Get started with OpenFinOps today</p>
+            <div class="cta-buttons">
+                <a href="documentation.html" class="btn btn-primary btn-lg">
+                    <i class="fas fa-book"></i> View Documentation
+                </a>
+                <a href="demo.html" class="btn btn-outline btn-lg">
+                    <i class="fas fa-desktop"></i> Try Live Demo
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-logo">
+                        <i class="fas fa-chart-line"></i>
+                        <span>OpenFinOps</span>
+                    </div>
+                    <p>Open source FinOps platform for AI/ML cost intelligence</p>
+                    <div class="social-links">
+                        <a href="https://github.com/rdmurugan/openfinops" target="_blank">
+                            <i class="fab fa-github"></i>
+                        </a>
+                        <a href="https://pypi.org/project/openfinops/" target="_blank">
+                            <i class="fab fa-python"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h4>Product</h4>
+                    <ul>
+                        <li><a href="features.html">Features</a></li>
+                        <li><a href="documentation.html">Documentation</a></li>
+                        <li><a href="api.html">API Reference</a></li>
+                        <li><a href="demo.html">Live Demo</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="https://github.com/rdmurugan/openfinops" target="_blank">GitHub</a></li>
+                        <li><a href="https://pypi.org/project/openfinops/" target="_blank">PyPI</a></li>
+                        <li><a href="documentation.html#installation">Installation</a></li>
+                        <li><a href="documentation.html#quickstart">Quick Start</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Community</h4>
+                    <ul>
+                        <li><a href="https://github.com/rdmurugan/openfinops/issues" target="_blank">Issues</a></li>
+                        <li><a href="https://github.com/rdmurugan/openfinops/discussions" target="_blank">Discussions</a></li>
+                        <li><a href="https://github.com/rdmurugan/openfinops/blob/master/CONTRIBUTING.md" target="_blank">Contributing</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 OpenFinOps. Licensed under Apache-2.0</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

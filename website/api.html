@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Reference - OpenFinOps</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code&display=swap" rel="stylesheet">
+    <style>
+        .api-page {
+            padding: 120px 0 80px;
+        }
+
+        .api-container {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 3rem;
+        }
+
+        .api-sidebar {
+            position: sticky;
+            top: 100px;
+            height: fit-content;
+        }
+
+        .api-menu {
+            list-style: none;
+        }
+
+        .api-menu li {
+            margin-bottom: 0.5rem;
+        }
+
+        .api-menu a {
+            display: block;
+            padding: 0.75rem 1rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .api-menu a:hover,
+        .api-menu a.active {
+            background: rgba(0, 212, 170, 0.1);
+            color: var(--primary-color);
+        }
+
+        .api-content {
+            max-width: 900px;
+        }
+
+        .api-section {
+            margin-bottom: 4rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .api-section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .api-section h3 {
+            font-size: 1.75rem;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .api-section h4 {
+            font-size: 1.25rem;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+            color: var(--primary-color);
+        }
+
+        .method-signature {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(0, 212, 170, 0.3);
+            border-left: 4px solid var(--primary-color);
+            border-radius: 8px;
+            padding: 1rem 1.5rem;
+            margin: 1rem 0;
+            font-family: 'Fira Code', monospace;
+            color: #00d4aa;
+        }
+
+        .params-table {
+            width: 100%;
+            margin: 1.5rem 0;
+            border-collapse: collapse;
+        }
+
+        .params-table th {
+            background: rgba(0, 212, 170, 0.1);
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        .params-table td {
+            padding: 0.75rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-secondary);
+        }
+
+        .params-table code {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            color: var(--primary-color);
+            font-size: 0.9rem;
+        }
+
+        .code-example {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            position: relative;
+        }
+
+        .code-example code {
+            font-family: 'Fira Code', monospace;
+            color: #00d4aa;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            display: block;
+            white-space: pre-wrap;
+        }
+
+        .code-label {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: rgba(0, 212, 170, 0.2);
+            color: var(--primary-color);
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .return-value {
+            background: rgba(0, 168, 255, 0.1);
+            border-left: 4px solid var(--secondary-color);
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        @media (max-width: 768px) {
+            .api-container {
+                grid-template-columns: 1fr;
+            }
+
+            .api-sidebar {
+                position: static;
+            }
+
+            .params-table {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-wrapper">
+                <div class="logo">
+                    <i class="fas fa-chart-line"></i>
+                    <span>OpenFinOps</span>
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="features.html">Features</a></li>
+                    <li><a href="documentation.html">Documentation</a></li>
+                    <li><a href="api.html" class="active">API Reference</a></li>
+                    <li><a href="demo.html" class="demo-btn">Live Demo</a></li>
+                    <li><a href="https://github.com/rdmurugan/openfinops" target="_blank"><i class="fab fa-github"></i></a></li>
+                </ul>
+                <div class="mobile-menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- API Reference Page -->
+    <div class="api-page">
+        <div class="container">
+            <div class="api-container">
+                <!-- Sidebar -->
+                <aside class="api-sidebar">
+                    <ul class="api-menu">
+                        <li><a href="#observability" class="active">ObservabilityHub</a></li>
+                        <li><a href="#llm-observability">LLM Observability</a></li>
+                        <li><a href="#cost-observatory">Cost Observatory</a></li>
+                        <li><a href="#dashboards">Dashboards</a></li>
+                        <li><a href="#telemetry">Telemetry Agents</a></li>
+                        <li><a href="#webui">Web UI Server</a></li>
+                    </ul>
+                </aside>
+
+                <!-- Content -->
+                <div class="api-content">
+                    <h1 style="font-size: 3.5rem; margin-bottom: 1rem;">API Reference</h1>
+                    <p style="font-size: 1.25rem; color: var(--text-secondary); margin-bottom: 3rem;">
+                        Complete API documentation for OpenFinOps
+                    </p>
+
+                    <!-- ObservabilityHub -->
+                    <section id="observability" class="api-section">
+                        <h2>ObservabilityHub</h2>
+                        <p style="color: var(--text-secondary);">
+                            The core component for comprehensive cost tracking and observability across your entire infrastructure.
+                        </p>
+
+                        <h3>Initialization</h3>
+                        <div class="method-signature">
+                            ObservabilityHub(config: Optional[Dict] = None)
+                        </div>
+
+                        <table class="params-table">
+                            <thead>
+                                <tr>
+                                    <th>Parameter</th>
+                                    <th>Type</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>config</code></td>
+                                    <td>Optional[Dict]</td>
+                                    <td>Configuration dictionary for custom settings</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <h4>track_cloud_cost()</h4>
+                        <div class="method-signature">
+                            track_cloud_cost(provider: str, service: str, cost: float, region: str = None, tags: Dict = None)
+                        </div>
+
+                        <table class="params-table">
+                            <thead>
+                                <tr>
+                                    <th>Parameter</th>
+                                    <th>Type</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>provider</code></td>
+                                    <td>str</td>
+                                    <td>Cloud provider: 'aws', 'azure', or 'gcp'</td>
+                                </tr>
+                                <tr>
+                                    <td><code>service</code></td>
+                                    <td>str</td>
+                                    <td>Service name (e.g., 'ec2', 's3', 'lambda')</td>
+                                </tr>
+                                <tr>
+                                    <td><code>cost</code></td>
+                                    <td>float</td>
+                                    <td>Cost amount in USD</td>
+                                </tr>
+                                <tr>
+                                    <td><code>region</code></td>
+                                    <td>Optional[str]</td>
+                                    <td>Cloud region (e.g., 'us-east-1')</td>
+                                </tr>
+                                <tr>
+                                    <td><code>tags</code></td>
+                                    <td>Optional[Dict]</td>
+                                    <td>Resource tags for attribution</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="code-example">
+                            <span class="code-label">PYTHON</span>
+                            <code>from openfinops import ObservabilityHub
+
+hub = ObservabilityHub()
+
+# Track AWS EC2 cost
+hub.track_cloud_cost(
+    provider="aws",
+    service="ec2",
+    cost=1250.50,
+    region="us-east-1",
+    tags={"team": "ml", "environment": "production"}
+)</code>
+                        </div>
+
+                        <h4>get_cost_summary()</h4>
+                        <div class="method-signature">
+                            get_cost_summary(start_date: str = None, end_date: str = None) -> Dict
+                        </div>
+
+                        <div class="return-value">
+                            <strong>Returns:</strong> Dictionary containing:
+                            <ul style="margin-top: 0.5rem;">
+                                <li><code>total_cost</code>: Total spend across all providers</li>
+                                <li><code>by_provider</code>: Cost breakdown by cloud provider</li>
+                                <li><code>by_service</code>: Cost breakdown by service</li>
+                                <li><code>trend</code>: Cost trend data</li>
+                            </ul>
+                        </div>
+                    </section>
+
+                    <!-- LLM Observability -->
+                    <section id="llm-observability" class="api-section">
+                        <h2>LLM Observability</h2>
+                        <p style="color: var(--text-secondary);">
+                            Specialized tracking for Large Language Model training and inference costs.
+                        </p>
+
+                        <h4>track_llm_training()</h4>
+                        <div class="method-signature">
+                            track_llm_training(model_name: str, training_cost: float, duration_hours: float, gpu_type: str = None)
+                        </div>
+
+                        <table class="params-table">
+                            <thead>
+                                <tr>
+                                    <th>Parameter</th>
+                                    <th>Type</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>model_name</code></td>
+                                    <td>str</td>
+                                    <td>Name of the model being trained</td>
+                                </tr>
+                                <tr>
+                                    <td><code>training_cost</code></td>
+                                    <td>float</td>
+                                    <td>Total training cost in USD</td>
+                                </tr>
+                                <tr>
+                                    <td><code>duration_hours</code></td>
+                                    <td>float</td>
+                                    <td>Training duration in hours</td>
+                                </tr>
+                                <tr>
+                                    <td><code>gpu_type</code></td>
+                                    <td>Optional[str]</td>
+                                    <td>GPU type used (e.g., 'A100', 'V100')</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="code-example">
+                            <span class="code-label">PYTHON</span>
+                            <code>hub.track_llm_training(
+    model_name="gpt-4-fine-tune",
+    training_cost=2450.75,
+    duration_hours=12.5,
+    gpu_type="A100"
+)</code>
+                        </div>
+
+                        <h4>track_inference_cost()</h4>
+                        <div class="method-signature">
+                            track_inference_cost(model: str, requests: int, tokens: int, cost: float)
+                        </div>
+
+                        <div class="code-example">
+                            <span class="code-label">PYTHON</span>
+                            <code>hub.track_inference_cost(
+    model="gpt-4",
+    requests=50000,
+    tokens=25000000,
+    cost=125.50
+)</code>
+                        </div>
+                    </section>
+
+                    <!-- Cost Observatory -->
+                    <section id="cost-observatory" class="api-section">
+                        <h2>Cost Observatory</h2>
+                        <p style="color: var(--text-secondary);">
+                            Advanced cost analysis and optimization recommendations.
+                        </p>
+
+                        <h4>get_cost_recommendations()</h4>
+                        <div class="method-signature">
+                            get_cost_recommendations(min_savings: float = 100.0) -> List[Recommendation]
+                        </div>
+
+                        <div class="code-example">
+                            <span class="code-label">PYTHON</span>
+                            <code>from openfinops.observability import CostObservatory
+
+observatory = CostObservatory()
+
+# Get recommendations with minimum $500 savings
+recommendations = observatory.get_cost_recommendations(min_savings=500.0)
+
+for rec in recommendations:
+    print(f"{rec.title}")
+    print(f"  Savings: ${rec.estimated_savings}/month")
+    print(f"  Impact: {rec.impact_level}")
+    print(f"  Action: {rec.action}")</code>
+                        </div>
+
+                        <h4>analyze_cost_trends()</h4>
+                        <div class="method-signature">
+                            analyze_cost_trends(days: int = 30) -> TrendAnalysis
+                        </div>
+
+                        <div class="return-value">
+                            <strong>Returns:</strong> TrendAnalysis object with:
+                            <ul style="margin-top: 0.5rem;">
+                                <li><code>trend_direction</code>: 'increasing' or 'decreasing'</li>
+                                <li><code>average_daily_cost</code>: Average cost per day</li>
+                                <li><code>anomalies</code>: List of detected cost anomalies</li>
+                                <li><code>forecast</code>: 30-day cost forecast</li>
+                            </ul>
+                        </div>
+                    </section>
+
+                    <!-- Dashboards -->
+                    <section id="dashboards" class="api-section">
+                        <h2>Dashboards</h2>
+                        <p style="color: var(--text-secondary);">
+                            Role-based dashboard components for executives and team leads.
+                        </p>
+
+                        <h3>CFO Dashboard</h3>
+                        <div class="method-signature">
+                            CFODashboard(hub: ObservabilityHub)
+                        </div>
+
+                        <div class="code-example">
+                            <span class="code-label">PYTHON</span>
+                            <code>from openfinops.dashboard import CFODashboard
+
+cfo_dash = CFODashboard(hub)
+
+# Generate financial report
+report = cfo_dash.generate_financial_report()
+print(f"Total Spend: ${report.total_spend}")
+print(f"AI/ML ROI: {report.ai_ml_roi}%")
+print(f"Budget Status: {report.budget_utilization}%")</code>
+                        </div>
+
+                        <h3>COO Dashboard</h3>
+                        <div class="method-signature">
+                            COODashboard(hub: ObservabilityHub)
+                        </div>
+
+                        <div class="code-example">
+                            <span class="code-label">PYTHON</span>
+                            <code>from openfinops.dashboard import COODashboard
+
+coo_dash = COODashboard(hub)
+
+# Get operational metrics
+metrics = coo_dash.get_operational_metrics()
+print(f"SLA Compliance: {metrics.sla_compliance}%")
+print(f"Efficiency Score: {metrics.operational_efficiency}%")</code>
+                        </div>
+
+                        <h3>Infrastructure Leader Dashboard</h3>
+                        <div class="method-signature">
+                            InfrastructureLeaderDashboard(hub: ObservabilityHub)
+                        </div>
+
+                        <div class="code-example">
+                            <span class="code-label">PYTHON</span>
+                            <code>from openfinops.dashboard import InfrastructureLeaderDashboard
+
+infra_dash = InfrastructureLeaderDashboard(hub)
+
+# Get resource utilization
+util = infra_dash.get_resource_utilization()
+print(f"CPU: {util.cpu_percent}%")
+print(f"Memory: {util.memory_percent}%")
+print(f"Storage: {util.storage_percent}%")</code>
+                        </div>
+                    </section>
+
+                    <!-- Telemetry Agents -->
+                    <section id="telemetry" class="api-section">
+                        <h2>Telemetry Agents</h2>
+                        <p style="color: var(--text-secondary);">
+                            Distributed agents for collecting cost data from cloud providers.
+                        </p>
+
+                        <h3>Generic Telemetry Agent</h3>
+                        <div class="code-example">
+                            <span class="code-label">PYTHON</span>
+                            <code>from openfinops.observability import DistributedTelemetry
+
+# Initialize telemetry
+telemetry = DistributedTelemetry(
+    hub_url="http://openfinops-server:8080",
+    agent_id="aws-us-east-1",
+    collection_interval=300  # 5 minutes
+)
+
+# Start collecting metrics
+telemetry.start()
+
+# Stop collection
+telemetry.stop()</code>
+                        </div>
+                    </section>
+
+                    <!-- Web UI Server -->
+                    <section id="webui" class="api-section">
+                        <h2>Web UI Server</h2>
+                        <p style="color: var(--text-secondary);">
+                            Flask-based web server with real-time WebSocket updates.
+                        </p>
+
+                        <h4>start_server()</h4>
+                        <div class="method-signature">
+                            start_server(host: str = '0.0.0.0', port: int = 8080, debug: bool = False)
+                        </div>
+
+                        <table class="params-table">
+                            <thead>
+                                <tr>
+                                    <th>Parameter</th>
+                                    <th>Type</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>host</code></td>
+                                    <td>str</td>
+                                    <td>Host to bind to (default: '0.0.0.0')</td>
+                                </tr>
+                                <tr>
+                                    <td><code>port</code></td>
+                                    <td>int</td>
+                                    <td>Port to bind to (default: 8080)</td>
+                                </tr>
+                                <tr>
+                                    <td><code>debug</code></td>
+                                    <td>bool</td>
+                                    <td>Enable debug mode (default: False)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="code-example">
+                            <span class="code-label">PYTHON</span>
+                            <code>from openfinops.webui import start_server
+
+# Start with custom configuration
+start_server(
+    host='0.0.0.0',
+    port=8080,
+    debug=False
+)
+
+# Available endpoints:
+# - GET  /                              # Overview dashboard
+# - GET  /dashboard/cfo                 # CFO dashboard
+# - GET  /dashboard/coo                 # COO dashboard
+# - GET  /dashboard/infrastructure      # Infrastructure dashboard
+# - GET  /api/health                    # Health check
+# - GET  /api/metrics                   # Get current metrics
+# - WS   /socket.io                     # WebSocket connection</code>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-logo">
+                        <i class="fas fa-chart-line"></i>
+                        <span>OpenFinOps</span>
+                    </div>
+                    <p>Open source FinOps platform for AI/ML cost intelligence</p>
+                    <div class="social-links">
+                        <a href="https://github.com/rdmurugan/openfinops" target="_blank">
+                            <i class="fab fa-github"></i>
+                        </a>
+                        <a href="https://pypi.org/project/openfinops/" target="_blank">
+                            <i class="fab fa-python"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h4>Product</h4>
+                    <ul>
+                        <li><a href="features.html">Features</a></li>
+                        <li><a href="documentation.html">Documentation</a></li>
+                        <li><a href="api.html">API Reference</a></li>
+                        <li><a href="demo.html">Live Demo</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="https://github.com/rdmurugan/openfinops" target="_blank">GitHub</a></li>
+                        <li><a href="https://pypi.org/project/openfinops/" target="_blank">PyPI</a></li>
+                        <li><a href="documentation.html#installation">Installation</a></li>
+                        <li><a href="documentation.html#quickstart">Quick Start</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Community</h4>
+                    <ul>
+                        <li><a href="https://github.com/rdmurugan/openfinops/issues" target="_blank">Issues</a></li>
+                        <li><a href="https://github.com/rdmurugan/openfinops/discussions" target="_blank">Discussions</a></li>
+                        <li><a href="https://github.com/rdmurugan/openfinops/blob/master/CONTRIBUTING.md" target="_blank">Contributing</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 OpenFinOps. Licensed under Apache-2.0</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script>
+        // Highlight active section in sidebar
+        const sections = document.querySelectorAll('.api-section');
+        const menuLinks = document.querySelectorAll('.api-menu a');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (scrollY >= (sectionTop - 100)) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            menuLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

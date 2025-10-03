@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Demo - OpenFinOps</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        .demo-page {
+            padding: 120px 0 80px;
+        }
+
+        .demo-hero {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .demo-hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .demo-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.3s;
+        }
+
+        .demo-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 212, 170, 0.2);
+            border-color: var(--primary-color);
+        }
+
+        .demo-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+
+        .demo-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .demo-card p {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        .demo-features {
+            list-style: none;
+            margin: 1rem 0;
+        }
+
+        .demo-features li {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .demo-features i {
+            color: var(--primary-color);
+            font-size: 0.875rem;
+        }
+
+        .quickstart-section {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 24px;
+            padding: 3rem;
+            margin: 4rem 0;
+        }
+
+        .quickstart-section h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .quickstart-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .step-card {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .step-number {
+            width: 50px;
+            height: 50px;
+            margin: 0 auto 1rem;
+            background: var(--primary-color);
+            color: var(--dark-bg);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .code-snippet {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(0, 212, 170, 0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            font-family: monospace;
+            color: var(--primary-color);
+            text-align: left;
+        }
+
+        @media (max-width: 768px) {
+            .demo-hero h1 {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-wrapper">
+                <div class="logo">
+                    <i class="fas fa-chart-line"></i>
+                    <span>OpenFinOps</span>
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="features.html">Features</a></li>
+                    <li><a href="documentation.html">Documentation</a></li>
+                    <li><a href="api.html">API Reference</a></li>
+                    <li><a href="demo.html" class="demo-btn active">Live Demo</a></li>
+                    <li><a href="https://github.com/rdmurugan/openfinops" target="_blank"><i class="fab fa-github"></i></a></li>
+                </ul>
+                <div class="mobile-menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Demo Page -->
+    <div class="demo-page">
+        <div class="container">
+            <div class="demo-hero">
+                <h1>Experience OpenFinOps</h1>
+                <p style="font-size: 1.25rem; color: var(--text-secondary); max-width: 700px; margin: 0 auto;">
+                    Try out the live Web UI dashboards with real-time updates and interactive visualizations
+                </p>
+            </div>
+
+            <!-- Demo Dashboards -->
+            <div class="demo-grid">
+                <div class="demo-card">
+                    <div class="demo-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Overview Dashboard</h3>
+                    <p>
+                        Real-time cost monitoring with live charts, service breakdown, and AI-powered recommendations
+                    </p>
+                    <ul class="demo-features">
+                        <li><i class="fas fa-check"></i> Live cost metrics</li>
+                        <li><i class="fas fa-check"></i> Service breakdown charts</li>
+                        <li><i class="fas fa-check"></i> Cost optimization tips</li>
+                        <li><i class="fas fa-check"></i> Activity feed</li>
+                    </ul>
+                    <a href="http://localhost:8080/" target="_blank" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
+                        <i class="fas fa-external-link-alt"></i> Open Dashboard
+                    </a>
+                </div>
+
+                <div class="demo-card">
+                    <div class="demo-icon">
+                        <i class="fas fa-briefcase"></i>
+                    </div>
+                    <h3>CFO Executive Dashboard</h3>
+                    <p>
+                        Financial intelligence with ROI analysis, budget tracking, and cost forecasting
+                    </p>
+                    <ul class="demo-features">
+                        <li><i class="fas fa-check"></i> Financial KPIs</li>
+                        <li><i class="fas fa-check"></i> Budget vs Actual</li>
+                        <li><i class="fas fa-check"></i> ROI analysis</li>
+                        <li><i class="fas fa-check"></i> Multi-cloud costs</li>
+                    </ul>
+                    <a href="http://localhost:8080/dashboard/cfo" target="_blank" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
+                        <i class="fas fa-external-link-alt"></i> Open Dashboard
+                    </a>
+                </div>
+
+                <div class="demo-card">
+                    <div class="demo-icon">
+                        <i class="fas fa-cogs"></i>
+                    </div>
+                    <h3>COO Operational Dashboard</h3>
+                    <p>
+                        Operational metrics with SLA tracking, efficiency scores, and performance analysis
+                    </p>
+                    <ul class="demo-features">
+                        <li><i class="fas fa-check"></i> SLA compliance</li>
+                        <li><i class="fas fa-check"></i> Operational efficiency</li>
+                        <li><i class="fas fa-check"></i> Resource utilization</li>
+                        <li><i class="fas fa-check"></i> Service health</li>
+                    </ul>
+                    <a href="http://localhost:8080/dashboard/coo" target="_blank" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
+                        <i class="fas fa-external-link-alt"></i> Open Dashboard
+                    </a>
+                </div>
+
+                <div class="demo-card">
+                    <div class="demo-icon">
+                        <i class="fas fa-server"></i>
+                    </div>
+                    <h3>Infrastructure Dashboard</h3>
+                    <p>
+                        Infrastructure insights with resource tracking, cost breakdown, and optimization tips
+                    </p>
+                    <ul class="demo-features">
+                        <li><i class="fas fa-check"></i> Resource metrics</li>
+                        <li><i class="fas fa-check"></i> Infrastructure costs</li>
+                        <li><i class="fas fa-check"></i> Multi-cloud resources</li>
+                        <li><i class="fas fa-check"></i> Optimization recommendations</li>
+                    </ul>
+                    <a href="http://localhost:8080/dashboard/infrastructure" target="_blank" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
+                        <i class="fas fa-external-link-alt"></i> Open Dashboard
+                    </a>
+                </div>
+            </div>
+
+            <!-- Quick Start Section -->
+            <div class="quickstart-section">
+                <h2>Run Your Own Demo</h2>
+                <p style="text-align: center; color: var(--text-secondary); margin-bottom: 2rem;">
+                    Get the demo running on your local machine in 3 simple steps
+                </p>
+
+                <div class="quickstart-steps">
+                    <div class="step-card">
+                        <div class="step-number">1</div>
+                        <h3>Install</h3>
+                        <p style="color: var(--text-secondary);">Install OpenFinOps via pip</p>
+                        <div class="code-snippet">
+                            pip install openfinops
+                        </div>
+                    </div>
+
+                    <div class="step-card">
+                        <div class="step-number">2</div>
+                        <h3>Start Server</h3>
+                        <p style="color: var(--text-secondary);">Launch the Web UI server</p>
+                        <div class="code-snippet">
+                            openfinops server
+                        </div>
+                    </div>
+
+                    <div class="step-card">
+                        <div class="step-number">3</div>
+                        <h3>Open Browser</h3>
+                        <p style="color: var(--text-secondary);">Access the dashboards</p>
+                        <div class="code-snippet">
+                            http://localhost:8080
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Features in Demo -->
+            <section style="margin-top: 4rem;">
+                <h2 style="text-align: center; font-size: 2.5rem; margin-bottom: 3rem;">What You'll Experience</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-sync-alt"></i>
+                        </div>
+                        <h3>Real-time Updates</h3>
+                        <p>
+                            WebSocket-powered live updates every 5 seconds. Watch your dashboards update in real-time
+                            without page refreshes.
+                        </p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-chart-bar"></i>
+                        </div>
+                        <h3>Interactive Charts</h3>
+                        <p>
+                            Beautiful Chart.js visualizations with tooltips, zoom, and animations. Explore your data
+                            with intuitive interactions.
+                        </p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-palette"></i>
+                        </div>
+                        <h3>Modern Design</h3>
+                        <p>
+                            Glassmorphism UI with dark theme, gradients, and smooth animations. A beautiful interface
+                            for FinOps intelligence.
+                        </p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-mobile-alt"></i>
+                        </div>
+                        <h3>Responsive Layout</h3>
+                        <p>
+                            Fully responsive design that works perfectly on desktop, tablet, and mobile devices.
+                            Monitor costs anywhere.
+                        </p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <h3>AI Recommendations</h3>
+                        <p>
+                            Smart cost optimization suggestions powered by AI. Get actionable recommendations with
+                            estimated savings.
+                        </p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-user-tie"></i>
+                        </div>
+                        <h3>Role-based Views</h3>
+                        <p>
+                            Different dashboards for CFO, COO, and Infrastructure teams. Each role gets the metrics
+                            that matter most.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- System Requirements -->
+            <section style="margin-top: 4rem;">
+                <div class="info-box">
+                    <h3 style="margin-top: 0; color: white;">System Requirements</h3>
+                    <ul style="margin-bottom: 0;">
+                        <li><strong>Python:</strong> 3.8 or higher</li>
+                        <li><strong>Browser:</strong> Chrome, Firefox, Safari, or Edge (latest versions)</li>
+                        <li><strong>Network:</strong> localhost access or network connection for remote access</li>
+                        <li><strong>Resources:</strong> Minimal CPU and memory footprint</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Call to Action -->
+            <div style="text-align: center; margin-top: 4rem; padding: 3rem; background: rgba(0, 212, 170, 0.05); border-radius: 24px;">
+                <h2 style="font-size: 2.5rem; margin-bottom: 1rem;">Ready to Deploy?</h2>
+                <p style="font-size: 1.125rem; color: var(--text-secondary); margin-bottom: 2rem;">
+                    Start using OpenFinOps in production and optimize your AI/ML costs
+                </p>
+                <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                    <a href="documentation.html" class="btn btn-primary btn-lg">
+                        <i class="fas fa-book"></i> Read Documentation
+                    </a>
+                    <a href="https://github.com/rdmurugan/openfinops" target="_blank" class="btn btn-outline btn-lg">
+                        <i class="fab fa-github"></i> View on GitHub
+                    </a>
+                    <a href="https://pypi.org/project/openfinops/" target="_blank" class="btn btn-secondary btn-lg">
+                        <i class="fab fa-python"></i> Get on PyPI
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-logo">
+                        <i class="fas fa-chart-line"></i>
+                        <span>OpenFinOps</span>
+                    </div>
+                    <p>Open source FinOps platform for AI/ML cost intelligence</p>
+                    <div class="social-links">
+                        <a href="https://github.com/rdmurugan/openfinops" target="_blank">
+                            <i class="fab fa-github"></i>
+                        </a>
+                        <a href="https://pypi.org/project/openfinops/" target="_blank">
+                            <i class="fab fa-python"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h4>Product</h4>
+                    <ul>
+                        <li><a href="features.html">Features</a></li>
+                        <li><a href="documentation.html">Documentation</a></li>
+                        <li><a href="api.html">API Reference</a></li>
+                        <li><a href="demo.html">Live Demo</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="https://github.com/rdmurugan/openfinops" target="_blank">GitHub</a></li>
+                        <li><a href="https://pypi.org/project/openfinops/" target="_blank">PyPI</a></li>
+                        <li><a href="documentation.html#installation">Installation</a></li>
+                        <li><a href="documentation.html#quickstart">Quick Start</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Community</h4>
+                    <ul>
+                        <li><a href="https://github.com/rdmurugan/openfinops/issues" target="_blank">Issues</a></li>
+                        <li><a href="https://github.com/rdmurugan/openfinops/discussions" target="_blank">Discussions</a></li>
+                        <li><a href="https://github.com/rdmurugan/openfinops/blob/master/CONTRIBUTING.md" target="_blank">Contributing</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 OpenFinOps. Licensed under Apache-2.0</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

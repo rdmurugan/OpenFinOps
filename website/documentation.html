@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentation - OpenFinOps</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code&display=swap" rel="stylesheet">
+    <style>
+        .docs-page {
+            padding: 120px 0 80px;
+        }
+
+        .docs-container {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 3rem;
+        }
+
+        .docs-sidebar {
+            position: sticky;
+            top: 100px;
+            height: fit-content;
+        }
+
+        .docs-menu {
+            list-style: none;
+        }
+
+        .docs-menu li {
+            margin-bottom: 0.5rem;
+        }
+
+        .docs-menu a {
+            display: block;
+            padding: 0.75rem 1rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .docs-menu a:hover,
+        .docs-menu a.active {
+            background: rgba(0, 212, 170, 0.1);
+            color: var(--primary-color);
+        }
+
+        .docs-content {
+            max-width: 800px;
+        }
+
+        .docs-content h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            margin-top: 3rem;
+        }
+
+        .docs-content h2:first-child {
+            margin-top: 0;
+        }
+
+        .docs-content h3 {
+            font-size: 1.75rem;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .docs-content p {
+            color: var(--text-secondary);
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+
+        .docs-content ul,
+        .docs-content ol {
+            margin-left: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .docs-content li {
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            line-height: 1.8;
+        }
+
+        .code-block {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            position: relative;
+            overflow-x: auto;
+        }
+
+        .code-block code {
+            font-family: 'Fira Code', monospace;
+            color: #00d4aa;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .code-label {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: rgba(0, 212, 170, 0.2);
+            color: var(--primary-color);
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .info-box {
+            background: rgba(0, 168, 255, 0.1);
+            border-left: 4px solid var(--secondary-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+        }
+
+        .info-box p {
+            margin-bottom: 0;
+        }
+
+        .warning-box {
+            background: rgba(255, 165, 0, 0.1);
+            border-left: 4px solid #ffa500;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+        }
+
+        .warning-box p {
+            margin-bottom: 0;
+        }
+
+        @media (max-width: 768px) {
+            .docs-container {
+                grid-template-columns: 1fr;
+            }
+
+            .docs-sidebar {
+                position: static;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-wrapper">
+                <div class="logo">
+                    <i class="fas fa-chart-line"></i>
+                    <span>OpenFinOps</span>
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="features.html">Features</a></li>
+                    <li><a href="documentation.html" class="active">Documentation</a></li>
+                    <li><a href="api.html">API Reference</a></li>
+                    <li><a href="demo.html" class="demo-btn">Live Demo</a></li>
+                    <li><a href="https://github.com/rdmurugan/openfinops" target="_blank"><i class="fab fa-github"></i></a></li>
+                </ul>
+                <div class="mobile-menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Documentation Page -->
+    <div class="docs-page">
+        <div class="container">
+            <div class="docs-container">
+                <!-- Sidebar -->
+                <aside class="docs-sidebar">
+                    <ul class="docs-menu">
+                        <li><a href="#getting-started" class="active">Getting Started</a></li>
+                        <li><a href="#installation">Installation</a></li>
+                        <li><a href="#quickstart">Quick Start</a></li>
+                        <li><a href="#web-ui">Web UI Server</a></li>
+                        <li><a href="#observability">Observability Hub</a></li>
+                        <li><a href="#dashboards">Dashboards</a></li>
+                        <li><a href="#telemetry">Telemetry Agents</a></li>
+                        <li><a href="#configuration">Configuration</a></li>
+                    </ul>
+                </aside>
+
+                <!-- Content -->
+                <div class="docs-content">
+                    <h1 style="font-size: 3.5rem; margin-bottom: 1rem;">Documentation</h1>
+                    <p style="font-size: 1.25rem; margin-bottom: 3rem;">
+                        Complete guide to getting started with OpenFinOps
+                    </p>
+
+                    <!-- Getting Started -->
+                    <section id="getting-started">
+                        <h2>Getting Started</h2>
+                        <p>
+                            OpenFinOps is an open-source FinOps platform designed for AI/ML cost observability
+                            and optimization. It provides comprehensive visibility into your cloud and AI infrastructure
+                            spending with real-time dashboards, intelligent recommendations, and multi-cloud support.
+                        </p>
+
+                        <h3>Key Features</h3>
+                        <ul>
+                            <li><strong>AI/ML Cost Tracking</strong> - Monitor training and inference costs in real-time</li>
+                            <li><strong>Multi-Cloud Support</strong> - AWS, Azure, and GCP integration</li>
+                            <li><strong>Executive Dashboards</strong> - Role-based dashboards for CFO, COO, Infrastructure</li>
+                            <li><strong>Smart Recommendations</strong> - AI-powered cost optimization suggestions</li>
+                            <li><strong>Real-time Monitoring</strong> - WebSocket-based live updates</li>
+                            <li><strong>Telemetry Agents</strong> - Distributed cost data collection</li>
+                        </ul>
+                    </section>
+
+                    <!-- Installation -->
+                    <section id="installation">
+                        <h2>Installation</h2>
+                        <p>
+                            OpenFinOps can be installed via pip, from source, or using Docker. The package
+                            supports Python 3.8 and above.
+                        </p>
+
+                        <h3>Install via pip</h3>
+                        <div class="code-block">
+                            <span class="code-label">BASH</span>
+                            <code>pip install openfinops</code>
+                        </div>
+
+                        <h3>Install with All Dependencies</h3>
+                        <div class="code-block">
+                            <span class="code-label">BASH</span>
+                            <code># Install with all cloud providers and features
+pip install openfinops[all]
+
+# Or install specific integrations
+pip install openfinops[aws]
+pip install openfinops[azure]
+pip install openfinops[gcp]</code>
+                        </div>
+
+                        <h3>Install from Source</h3>
+                        <div class="code-block">
+                            <span class="code-label">BASH</span>
+                            <code>git clone https://github.com/rdmurugan/openfinops.git
+cd openfinops
+pip install -e .</code>
+                        </div>
+
+                        <div class="info-box">
+                            <p><strong>Note:</strong> For Web UI functionality, ensure you have flask-socketio and eventlet installed. These are included in the base installation.</p>
+                        </div>
+                    </section>
+
+                    <!-- Quick Start -->
+                    <section id="quickstart">
+                        <h2>Quick Start</h2>
+                        <p>
+                            Get up and running with OpenFinOps in under 5 minutes. This guide will show you
+                            how to launch the Web UI and start monitoring your costs.
+                        </p>
+
+                        <h3>1. Start the Web UI Server</h3>
+                        <div class="code-block">
+                            <span class="code-label">BASH</span>
+                            <code># Using the CLI
+openfinops server --host 127.0.0.1 --port 8080
+
+# Or using Python
+python -m openfinops server</code>
+                        </div>
+
+                        <h3>2. Access the Dashboards</h3>
+                        <p>Open your browser and navigate to:</p>
+                        <ul>
+                            <li><strong>Overview Dashboard:</strong> <code>http://localhost:8080/</code></li>
+                            <li><strong>CFO Executive:</strong> <code>http://localhost:8080/dashboard/cfo</code></li>
+                            <li><strong>COO Operational:</strong> <code>http://localhost:8080/dashboard/coo</code></li>
+                            <li><strong>Infrastructure:</strong> <code>http://localhost:8080/dashboard/infrastructure</code></li>
+                        </ul>
+
+                        <h3>3. Use the Python API</h3>
+                        <div class="code-block">
+                            <span class="code-label">PYTHON</span>
+                            <code>from openfinops import ObservabilityHub
+
+# Initialize the observability hub
+hub = ObservabilityHub()
+
+# Track AI/ML costs
+hub.track_llm_training(
+    model_name="gpt-4-fine-tune",
+    training_cost=1250.00,
+    duration_hours=8.5,
+    gpu_type="A100"
+)
+
+# Get cost summary
+summary = hub.get_cost_summary()
+print(summary)</code>
+                        </div>
+                    </section>
+
+                    <!-- Web UI -->
+                    <section id="web-ui">
+                        <h2>Web UI Server</h2>
+                        <p>
+                            The Web UI provides beautiful, real-time dashboards with WebSocket-based live updates.
+                            All dashboards feature glassmorphism design, Chart.js visualizations, and responsive layouts.
+                        </p>
+
+                        <h3>Server Configuration</h3>
+                        <div class="code-block">
+                            <span class="code-label">PYTHON</span>
+                            <code>from openfinops.webui import start_server
+
+# Start with custom configuration
+start_server(
+    host='0.0.0.0',
+    port=8080,
+    debug=False
+)</code>
+                        </div>
+
+                        <h3>Available Features</h3>
+                        <ul>
+                            <li><strong>Real-time Updates</strong> - WebSocket pushes every 5 seconds</li>
+                            <li><strong>Interactive Charts</strong> - Click-to-zoom, tooltips, animations</li>
+                            <li><strong>Responsive Design</strong> - Mobile and desktop optimized</li>
+                            <li><strong>Live Metrics</strong> - Cost trends, resource usage, performance</li>
+                        </ul>
+                    </section>
+
+                    <!-- Observability Hub -->
+                    <section id="observability">
+                        <h2>Observability Hub</h2>
+                        <p>
+                            The Observability Hub is the core component for tracking and analyzing costs across
+                            your entire infrastructure.
+                        </p>
+
+                        <h3>Basic Usage</h3>
+                        <div class="code-block">
+                            <span class="code-label">PYTHON</span>
+                            <code>from openfinops import ObservabilityHub
+
+# Initialize
+hub = ObservabilityHub()
+
+# Track cloud costs
+hub.track_cloud_cost(
+    provider="aws",
+    service="ec2",
+    cost=450.25,
+    region="us-east-1"
+)
+
+# Track AI/ML inference
+hub.track_inference_cost(
+    model="gpt-4",
+    requests=10000,
+    tokens=5000000,
+    cost=25.50
+)
+
+# Get recommendations
+recommendations = hub.get_cost_recommendations()
+for rec in recommendations:
+    print(f"{rec.title}: Save ${rec.estimated_savings}/month")</code>
+                        </div>
+                    </section>
+
+                    <!-- Dashboards -->
+                    <section id="dashboards">
+                        <h2>Dashboards</h2>
+                        <p>
+                            OpenFinOps provides role-based dashboards tailored for different stakeholders
+                            in your organization.
+                        </p>
+
+                        <h3>CFO Dashboard</h3>
+                        <div class="code-block">
+                            <span class="code-label">PYTHON</span>
+                            <code>from openfinops.dashboard import CFODashboard
+
+# Initialize CFO dashboard
+cfo_dash = CFODashboard()
+
+# Generate financial report
+report = cfo_dash.generate_financial_report()
+print(report.total_spend)
+print(report.roi_analysis)
+print(report.budget_status)</code>
+                        </div>
+
+                        <h3>Infrastructure Dashboard</h3>
+                        <div class="code-block">
+                            <span class="code-label">PYTHON</span>
+                            <code>from openfinops.dashboard import InfrastructureLeaderDashboard
+
+# Initialize infrastructure dashboard
+infra_dash = InfrastructureLeaderDashboard()
+
+# Get resource utilization
+utilization = infra_dash.get_resource_utilization()
+print(f"CPU: {utilization.cpu_percent}%")
+print(f"Memory: {utilization.memory_percent}%")</code>
+                        </div>
+                    </section>
+
+                    <!-- Telemetry Agents -->
+                    <section id="telemetry">
+                        <h2>Telemetry Agents</h2>
+                        <p>
+                            Deploy lightweight agents to collect cost and usage data from your cloud providers.
+                        </p>
+
+                        <h3>AWS Telemetry Agent</h3>
+                        <div class="code-block">
+                            <span class="code-label">PYTHON</span>
+                            <code># agents/aws_telemetry_agent.py
+from openfinops.observability import ObservabilityHub
+import boto3
+
+hub = ObservabilityHub()
+ce_client = boto3.client('ce')
+
+# Collect cost data
+response = ce_client.get_cost_and_usage(
+    TimePeriod={'Start': '2025-01-01', 'End': '2025-01-31'},
+    Granularity='DAILY',
+    Metrics=['UnblendedCost']
+)
+
+# Send to OpenFinOps
+for result in response['ResultsByTime']:
+    hub.track_cloud_cost(
+        provider='aws',
+        cost=float(result['Total']['UnblendedCost']['Amount']),
+        date=result['TimePeriod']['Start']
+    )</code>
+                        </div>
+
+                        <div class="warning-box">
+                            <p><strong>Security Note:</strong> Always use IAM roles with minimal permissions when deploying telemetry agents. Never hardcode credentials.</p>
+                        </div>
+                    </section>
+
+                    <!-- Configuration -->
+                    <section id="configuration">
+                        <h2>Configuration</h2>
+                        <p>
+                            OpenFinOps can be configured via environment variables, configuration files,
+                            or programmatically.
+                        </p>
+
+                        <h3>Environment Variables</h3>
+                        <div class="code-block">
+                            <span class="code-label">BASH</span>
+                            <code>export OPENFINOPS_HOST=0.0.0.0
+export OPENFINOPS_PORT=8080
+export OPENFINOPS_DEBUG=false
+
+# Cloud provider credentials
+export AWS_ACCESS_KEY_ID=your_key
+export AWS_SECRET_ACCESS_KEY=your_secret
+export AZURE_SUBSCRIPTION_ID=your_sub_id
+export GCP_PROJECT_ID=your_project</code>
+                        </div>
+
+                        <h3>Configuration File</h3>
+                        <div class="code-block">
+                            <span class="code-label">YAML</span>
+                            <code># config.yaml
+server:
+  host: 0.0.0.0
+  port: 8080
+  debug: false
+
+observability:
+  update_interval: 5
+  retention_days: 90
+
+alerts:
+  budget_threshold: 10000
+  anomaly_detection: true
+  notification_channels:
+    - email
+    - slack</code>
+                        </div>
+                    </section>
+
+                    <!-- Next Steps -->
+                    <div class="info-box" style="margin-top: 3rem;">
+                        <h3 style="margin-top: 0; color: white;">Next Steps</h3>
+                        <ul style="margin-bottom: 0;">
+                            <li><a href="api.html" style="color: var(--secondary-color);">Explore the API Reference →</a></li>
+                            <li><a href="demo.html" style="color: var(--secondary-color);">Try the Live Demo →</a></li>
+                            <li><a href="https://github.com/rdmurugan/openfinops" style="color: var(--secondary-color);" target="_blank">View on GitHub →</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-logo">
+                        <i class="fas fa-chart-line"></i>
+                        <span>OpenFinOps</span>
+                    </div>
+                    <p>Open source FinOps platform for AI/ML cost intelligence</p>
+                    <div class="social-links">
+                        <a href="https://github.com/rdmurugan/openfinops" target="_blank">
+                            <i class="fab fa-github"></i>
+                        </a>
+                        <a href="https://pypi.org/project/openfinops/" target="_blank">
+                            <i class="fab fa-python"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h4>Product</h4>
+                    <ul>
+                        <li><a href="features.html">Features</a></li>
+                        <li><a href="documentation.html">Documentation</a></li>
+                        <li><a href="api.html">API Reference</a></li>
+                        <li><a href="demo.html">Live Demo</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="https://github.com/rdmurugan/openfinops" target="_blank">GitHub</a></li>
+                        <li><a href="https://pypi.org/project/openfinops/" target="_blank">PyPI</a></li>
+                        <li><a href="#installation">Installation</a></li>
+                        <li><a href="#quickstart">Quick Start</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Community</h4>
+                    <ul>
+                        <li><a href="https://github.com/rdmurugan/openfinops/issues" target="_blank">Issues</a></li>
+                        <li><a href="https://github.com/rdmurugan/openfinops/discussions" target="_blank">Discussions</a></li>
+                        <li><a href="https://github.com/rdmurugan/openfinops/blob/master/CONTRIBUTING.md" target="_blank">Contributing</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 OpenFinOps. Licensed under Apache-2.0</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script>
+        // Highlight active section in sidebar
+        const sections = document.querySelectorAll('.docs-content section');
+        const menuLinks = document.querySelectorAll('.docs-menu a');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (scrollY >= (sectionTop - 100)) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            menuLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
