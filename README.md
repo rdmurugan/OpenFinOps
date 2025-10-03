@@ -4,6 +4,9 @@
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Python](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![PyPI version](https://img.shields.io/pypi/v/openfinops.svg)](https://pypi.org/project/openfinops/)
+[![PyPI downloads](https://img.shields.io/pypi/dm/openfinops.svg)](https://pypi.org/project/openfinops/)
+[![Total downloads](https://pepy.tech/badge/openfinops)](https://pepy.tech/project/openfinops)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
 ## 🎯 Overview
