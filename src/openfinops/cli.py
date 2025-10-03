@@ -20,7 +20,7 @@ def main():
     parser.add_argument(
         "--version",
         action="version",
-        version="OpenFinOps 0.1.3"
+        version="OpenFinOps 0.1.4"
     )
 
     subparsers = parser.add_subparsers(dest="command", help="Available commands")
@@ -52,49 +52,64 @@ def main():
 
 def server_command(args=None):
     """Start the OpenFinOps server."""
-    print("🚀 Starting OpenFinOps Server...")
-    print(f"   Host: {args.host if args else '127.0.0.1'}")
-    print(f"   Port: {args.port if args else 8080}")
-    print("\n   Dashboard will be available at:")
-    print(f"   http://{args.host if args else '127.0.0.1'}:{args.port if args else 8080}\n")
+    print("🚀 Starting OpenFinOps Web UI Server...")
+    host = args.host if args else '127.0.0.1'
+    port = args.port if args else 8080
 
-    # TODO: Implement server startup
-    print("⚠️  Server implementation coming soon!")
-    print("   This will start the Flask/Tornado web server for dashboards")
+    print(f"   Host: {host}")
+    print(f"   Port: {port}")
+    print("\n   Dashboard will be available at:")
+    print(f"   http://{host}:{port}\n")
+
+    try:
+        from openfinops.webui import start_server
+
+        if start_server is None:
+            raise ImportError("Web UI module not available")
+
+        print("✅ OpenFinOps Web UI loaded successfully")
+        print()
+        print("📊 Available Dashboards:")
+        print(f"   • Overview Dashboard:     http://{host}:{port}/")
+        print(f"   • CFO Executive:          http://{host}:{port}/dashboard/cfo")
+        print(f"   • COO Operational:        http://{host}:{port}/dashboard/coo")
+        print(f"   • Infrastructure Leader:  http://{host}:{port}/dashboard/infrastructure")
+        print()
+        print("🔄 Real-time Updates: Enabled (WebSocket)")
+        print("📈 Live Charts: Enabled (Chart.js)")
+        print()
+        print("Press Ctrl+C to stop the server\n")
+        print("-" * 60)
+
+        # Start the server
+        start_server(host=host, port=port, debug=False)
+
+    except ImportError as e:
+        print(f"⚠️  Error: Web UI dependencies not available")
+        print(f"   {str(e)}")
+        print()
+        print("   Please install web UI dependencies:")
+        print("   pip install flask flask-socketio flask-cors")
+        print()
+        print("   Or install with all dependencies:")
+        print("   pip install openfinops[all]")
+    except Exception as e:
+        print(f"❌ Error starting server: {e}")
+        import traceback
+        traceback.print_exc()
 
 
 def dashboard_command(args=None):
     """Launch the dashboard."""
-    port = args.port if args else 8080
+    # Reuse server_command since they both launch the same Web UI
+    if args is None:
+        # Create a simple args object
+        class Args:
+            port = 8080
+            host = '127.0.0.1'
+        args = Args()
 
-    print("📊 Launching OpenFinOps Dashboard...")
-    print(f"   Port: {port}")
-    print(f"   URL: http://localhost:{port}")
-    print()
-
-    try:
-        from openfinops.observability import ObservabilityHub
-        from openfinops.dashboard import CFODashboard
-
-        print("✅ OpenFinOps components loaded successfully")
-        print()
-        print("🎯 Available Features:")
-        print("   • ObservabilityHub - Core observability platform")
-        print("   • CFO Dashboard - Financial executive dashboard")
-        print("   • Cost Observatory - Multi-cloud cost tracking")
-        print("   • LLM Monitoring - AI/ML cost tracking")
-        print()
-        print("📝 Quick Start:")
-        print("   from openfinops import ObservabilityHub")
-        print("   hub = ObservabilityHub()")
-        print()
-        print("⚠️  Web UI server coming soon!")
-        print("   Use Python API for now - see docs at:")
-        print("   https://github.com/rdmurugan/openfinops")
-
-    except Exception as e:
-        print(f"⚠️  Error loading components: {e}")
-        print("   Please check installation: pip install openfinops")
+    server_command(args)
 
 
 def init_command(args):

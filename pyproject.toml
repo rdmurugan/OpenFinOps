@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "openfinops"
-version = "0.1.3"
+version = "0.1.4"
 description = "Open Source FinOps Platform for AI/ML Cost Observability and Optimization"
 readme = "README.md"
 license = {text = "Apache-2.0"}
@@ -43,6 +43,8 @@ dependencies = [
     "matplotlib>=3.7.0",
     "tornado>=6.0.0",
     "flask>=2.0.0",
+    "flask-socketio>=5.3.0",
+    "flask-cors>=4.0.0",
     "requests>=2.28.0",
     "pyyaml>=6.0",
 ]
@@ -116,9 +118,9 @@ where = ["src"]
 
 [tool.setuptools.package-data]
 openfinops = [
-    "templates/*.html",
-    "static/*.js",
-    "static/*.css",
+    "webui/templates/*.html",
+    "webui/static/*.js",
+    "webui/static/*.css",
     "config/*.yaml",
 ]
 
