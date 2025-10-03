@@ -17,7 +17,7 @@ Features:
 License: Apache 2.0
 """
 
-__version__ = "0.1.1"
+__version__ = "0.1.2"
 __author__ = "OpenFinOps Contributors"
 __license__ = "Apache-2.0"
 
