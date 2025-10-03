@@ -22,16 +22,13 @@ from io import BytesIO
 from typing import Dict, List, Any, Optional, Tuple
 from datetime import datetime, timedelta
 
-# Import OpenFinOps core components
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
+# Import VizlyChart components
 try:
-    from openfinops import VizlyFigure, LineChart, ScatterChart, BarChart
-    from openfinops.theme import VizlyTheme
-    from openfinops.colors import ColorHDR
+    from openfinops.vizlychart import VizlyFigure, LineChart, ScatterChart, BarChart, ColorHDR
+    from openfinops.vizlychart.theme import get_theme
     VIZLYCHART_AVAILABLE = True
 except ImportError:
     VIZLYCHART_AVAILABLE = False
-    print("Warning: OpenFinOps core not available. Using fallback rendering.")
 
 
 class ObservabilityVisualization:
@@ -40,7 +37,12 @@ class ObservabilityVisualization:
     def __init__(self, theme: str = "professional"):
         self.theme_name = theme
         if VIZLYCHART_AVAILABLE:
-            self.theme = VizlyTheme.get_theme(theme) if hasattr(VizlyTheme, 'get_theme') else None
+            try:
+                self.theme = get_theme(theme)
+            except:
+                self.theme = None
+        else:
+            self.theme = None
         self.colors = self._init_color_palette()
 
     def _init_color_palette(self) -> Dict[str, str]:

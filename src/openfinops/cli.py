@@ -65,12 +65,36 @@ def server_command(args=None):
 
 def dashboard_command(args=None):
     """Launch the dashboard."""
-    print("📊 Launching OpenFinOps Dashboard...")
-    print(f"   Port: {args.port if args else 8080}")
+    port = args.port if args else 8080
 
-    # TODO: Implement dashboard launch
-    print("⚠️  Dashboard implementation coming soon!")
-    print("   This will open the web dashboard in your browser")
+    print("📊 Launching OpenFinOps Dashboard...")
+    print(f"   Port: {port}")
+    print(f"   URL: http://localhost:{port}")
+    print()
+
+    try:
+        from openfinops.observability import ObservabilityHub
+        from openfinops.dashboard import CFODashboard
+
+        print("✅ OpenFinOps components loaded successfully")
+        print()
+        print("🎯 Available Features:")
+        print("   • ObservabilityHub - Core observability platform")
+        print("   • CFO Dashboard - Financial executive dashboard")
+        print("   • Cost Observatory - Multi-cloud cost tracking")
+        print("   • LLM Monitoring - AI/ML cost tracking")
+        print()
+        print("📝 Quick Start:")
+        print("   from openfinops import ObservabilityHub")
+        print("   hub = ObservabilityHub()")
+        print()
+        print("⚠️  Web UI server coming soon!")
+        print("   Use Python API for now - see docs at:")
+        print("   https://github.com/rdmurugan/openfinops")
+
+    except Exception as e:
+        print(f"⚠️  Error loading components: {e}")
+        print("   Please check installation: pip install openfinops")
 
 
 def init_command(args):

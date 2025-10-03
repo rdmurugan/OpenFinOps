@@ -35,13 +35,11 @@ import asyncio
 
 # Import OpenFinOps components for professional visualization
 try:
-    from vizlychart.charts import LineChart, ScatterChart, BarChart
-    from vizlychart.figure import VizlyFigure
-    from vizlychart.theme import VizlyTheme
+    from openfinops.vizlychart import LineChart, ScatterChart, BarChart, VizlyFigure
+    from openfinops.vizlychart.theme import get_theme
     VIZLYCHART_AVAILABLE = True
 except ImportError:
     VIZLYCHART_AVAILABLE = False
-    logging.warning("OpenFinOps components not available. Using fallback rendering.")
 
 
 class LLMTrainingStage(Enum):
