@@ -20,7 +20,7 @@ def main():
     parser.add_argument(
         "--version",
         action="version",
-        version="OpenFinOps 0.1.4"
+        version="OpenFinOps 0.1.5"
     )
 
     subparsers = parser.add_subparsers(dest="command", help="Available commands")

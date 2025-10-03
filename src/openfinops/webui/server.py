@@ -36,7 +36,14 @@ app.config['SECRET_KEY'] = 'openfinops-secret-key-change-in-production'
 CORS(app)
 
 # Initialize SocketIO for real-time updates
-socketio = SocketIO(app, cors_allowed_origins="*", async_mode='threading')
+# Use eventlet for better WebSocket support, fallback to threading
+try:
+    import eventlet
+    socketio = SocketIO(app, cors_allowed_origins="*", async_mode='eventlet')
+except ImportError:
+    # Fallback to threading mode (WebSocket may not work in dev mode)
+    socketio = SocketIO(app, cors_allowed_origins="*", async_mode='threading',
+                       engineio_logger=False, logger=False)
 
 # Global state
 dashboard_data = {
