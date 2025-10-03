@@ -18,14 +18,14 @@ from decimal import Decimal
 
 # Import VizlyChart for professional visualizations
 try:
-    import vizlychart as vc
-    from vizlychart.charts.financial import FinancialChart
-    from vizlychart.charts.advanced import AdvancedAnalytics
-    from vizlychart.enterprise.themes import AnalystTheme
+    import openfinops.vizlychart as vc
+    from openfinops.vizlychart.charts.financial import FinancialChart
+    from openfinops.vizlychart.charts.advanced import AdvancedAnalytics
+    from openfinops.vizlychart.enterprise.themes import AnalystTheme
     VIZLYCHART_AVAILABLE = True
 except ImportError:
     VIZLYCHART_AVAILABLE = False
-    logging.warning("VizlyChart not available. Using fallback visualizations.")
+    # VizlyChart is optional - dashboards work with fallback visualizations
 
 from .iam_system import get_iam_manager, DashboardType, DataClassification
 

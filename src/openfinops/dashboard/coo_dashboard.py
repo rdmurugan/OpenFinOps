@@ -17,14 +17,14 @@ from enum import Enum
 
 # Import VizlyChart for professional visualizations
 try:
-    import vizlychart as vc
-    from vizlychart.enterprise.charts import OperationalDashboard, ProcessAnalytics
-    from vizlychart.charts.advanced import BusinessIntelligence
-    from vizlychart.enterprise.themes import ExecutiveTheme
+    import openfinops.vizlychart as vc
+    from openfinops.vizlychart.enterprise.charts import OperationalDashboard, ProcessAnalytics
+    from openfinops.vizlychart.charts.advanced import BusinessIntelligence
+    from openfinops.vizlychart.enterprise.themes import ExecutiveTheme
     VIZLYCHART_AVAILABLE = True
 except ImportError:
     VIZLYCHART_AVAILABLE = False
-    logging.warning("VizlyChart not available. Using fallback visualizations.")
+    # VizlyChart is optional - dashboards work with fallback visualizations
 
 from .iam_system import get_iam_manager, DashboardType, DataClassification
 

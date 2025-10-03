@@ -18,14 +18,14 @@ import time
 
 # Import VizlyChart for professional visualizations
 try:
-    import vizlychart as vc
-    from vizlychart.charts.engineering import SystemMonitoring, InfrastructureCharts
-    from vizlychart.charts.advanced import PerformanceAnalytics
-    from vizlychart.enterprise.themes import InfrastructureTheme
+    import openfinops.vizlychart as vc
+    from openfinops.vizlychart.charts.engineering import SystemMonitoring, InfrastructureCharts
+    from openfinops.vizlychart.charts.advanced import PerformanceAnalytics
+    from openfinops.vizlychart.enterprise.themes import InfrastructureTheme
     VIZLYCHART_AVAILABLE = True
 except ImportError:
     VIZLYCHART_AVAILABLE = False
-    logging.warning("VizlyChart not available. Using fallback visualizations.")
+    # VizlyChart is optional - dashboards work with fallback visualizations
 
 from .iam_system import get_iam_manager, DashboardType, DataClassification
 

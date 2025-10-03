@@ -16,13 +16,13 @@ from dataclasses import dataclass
 
 # Import VizlyChart for professional visualizations
 try:
-    import vizlychart as vc
-    from vizlychart.enterprise.charts import ExecutiveDashboard, FinancialAnalytics
-    from vizlychart.enterprise.themes import EnterpriseTheme
+    import openfinops.vizlychart as vc
+    from openfinops.vizlychart.enterprise.charts import ExecutiveDashboard, FinancialAnalytics
+    from openfinops.vizlychart.enterprise.themes import EnterpriseTheme
     VIZLYCHART_AVAILABLE = True
 except ImportError:
     VIZLYCHART_AVAILABLE = False
-    logging.warning("VizlyChart not available. Using fallback visualizations.")
+    # VizlyChart is optional - dashboards work with fallback visualizations
 
 from .iam_system import get_iam_manager, DashboardType, DataClassification
 
