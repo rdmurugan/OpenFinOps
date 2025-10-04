@@ -12,7 +12,10 @@ Features:
 - AI API Usage Tracking (OpenAI, Anthropic)
 - Executive Dashboards (CFO, COO, Infrastructure)
 - Cost Attribution and Reporting
-- AI-Powered Optimization Recommendations
+- Intelligent LLM-Powered Recommendations (Hardware, Scaling, Cost Optimization)
+- Data Platform Monitoring (Databricks, Snowflake)
+- SaaS Services Tracking (MongoDB Atlas, Redis Cloud, GitHub Actions)
+- Real-time Web UI with WebSocket Updates
 
 License: Apache 2.0
 """
@@ -34,7 +37,7 @@ License: Apache 2.0
 
 
 
-__version__ = "0.1.3"
+__version__ = "0.2.0"
 __author__ = "OpenFinOps Contributors"
 __license__ = "Apache-2.0"
 

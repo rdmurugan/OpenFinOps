@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "openfinops"
-version = "0.1.5"
-description = "Open Source FinOps Platform for AI/ML Cost Observability and Optimization"
+version = "0.2.0"
+description = "Open Source FinOps Platform for AI/ML Cost Observability with Intelligent LLM-Powered Recommendations"
 readme = "README.md"
 license = {text = "Apache-2.0"}
 authors = [
@@ -35,7 +35,9 @@ keywords = [
     "finops", "cost-optimization", "observability", "ai-ml",
     "cloud-cost", "aws", "azure", "gcp", "openai", "anthropic",
     "llm-monitoring", "rag-monitoring", "cost-attribution",
-    "visualization", "dashboard", "telemetry", "multi-cloud"
+    "visualization", "dashboard", "telemetry", "multi-cloud",
+    "intelligent-recommendations", "hardware-optimization", "gpu-optimization",
+    "scaling-recommendations", "auto-scaling", "llm-powered", "claude"
 ]
 requires-python = ">=3.8"
 dependencies = [
@@ -123,6 +125,7 @@ openfinops = [
     "webui/static/*.js",
     "webui/static/*.css",
     "config/*.yaml",
+    "dashboard/*.yaml",
 ]
 
 [tool.black]

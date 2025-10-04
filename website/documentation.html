@@ -196,6 +196,7 @@
                 <ul class="nav-menu">
                     <li><a href="index.html">Home</a></li>
                     <li><a href="features.html">Features</a></li>
+                    <li><a href="intelligent-recommendations.html">AI Recommendations</a></li>
                     <li><a href="documentation.html" class="active">Documentation</a></li>
                     <li><a href="api.html">API Reference</a></li>
                     <li><a href="demo.html" class="demo-btn">Live Demo</a></li>
@@ -220,6 +221,7 @@
                         <li><a href="#quickstart">Quick Start</a></li>
                         <li><a href="#web-ui">Web UI Server</a></li>
                         <li><a href="#observability">Observability Hub</a></li>
+                        <li><a href="#recommendations">Intelligent Recommendations</a></li>
                         <li><a href="#dashboards">Dashboards</a></li>
                         <li><a href="#telemetry">Cloud Telemetry Agents</a></li>
                         <li><a href="#data-platforms">Data Platform Services</a></li>
@@ -251,7 +253,7 @@
                             <li><strong>Data Platform Monitoring</strong> - Databricks DBU tracking, Snowflake credit consumption</li>
                             <li><strong>SaaS Service Tracking</strong> - MongoDB Atlas, Redis Cloud, GitHub Actions, DataDog</li>
                             <li><strong>Executive Dashboards</strong> - Role-based dashboards for CFO, COO, Infrastructure</li>
-                            <li><strong>Smart Recommendations</strong> - AI-powered cost optimization suggestions</li>
+                            <li><strong>Intelligent Recommendations</strong> - LLM-powered hardware and scaling recommendations</li>
                             <li><strong>Real-time Monitoring</strong> - WebSocket-based live updates</li>
                             <li><strong>Telemetry Agents</strong> - Distributed cost data collection across all services</li>
                         </ul>
@@ -453,6 +455,85 @@ for cluster_id, metrics in health.items():
 summary = cost_obs.get_cost_summary(time_range_hours=24)
 print(f"Total 24h cost: ${summary['total_cost']:.2f}")</code>
                             </div>
+                        </div>
+                    </section>
+
+                    <!-- Intelligent Recommendations -->
+                    <section id="recommendations">
+                        <h2>🤖 Intelligent Recommendations</h2>
+                        <p>
+                            Get AI-powered hardware and scaling recommendations for your AI/ML infrastructure.
+                            Configure your preferred LLM provider or use rule-based recommendations.
+                        </p>
+
+                        <h3>Quick Start</h3>
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span class="code-label">PYTHON</span>
+                                <button class="code-copy-btn" onclick="copyCode(this)">
+                                    <i class="fas fa-copy"></i> Copy
+                                </button>
+                            </div>
+                            <div class="code-content">
+                                <code>from openfinops.observability.intelligent_recommendations import get_recommendations
+
+# Your infrastructure metrics
+metrics = {
+    'instance_count': 4,
+    'avg_cpu_utilization': 65,
+    'avg_gpu_utilization': 45,
+    'cost_per_instance_hour': 3.06,
+    'workload_type': 'inference'
+}
+
+# Get recommendations
+recommendations = get_recommendations(
+    current_metrics=metrics,
+    workload_type='inference',
+    cloud_provider='aws'
+)
+
+# Display recommendations
+for rec in recommendations:
+    print(f"\n{rec.title}")
+    print(f"Priority: {rec.priority}")
+    print(f"Impact: ${rec.impact['cost_monthly_usd']}/month")
+    print(f"Steps: {rec.implementation['steps']}")</code>
+                            </div>
+                        </div>
+
+                        <h3>Configure LLM Provider (Optional)</h3>
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span class="code-label">BASH</span>
+                                <button class="code-copy-btn" onclick="copyCode(this)">
+                                    <i class="fas fa-copy"></i> Copy
+                                </button>
+                            </div>
+                            <div class="code-content">
+                                <code># OpenAI
+export OPENAI_API_KEY="sk-..."
+export OPENAI_MODEL="gpt-4-turbo-preview"
+
+# Or Anthropic
+export ANTHROPIC_API_KEY="sk-ant-..."
+export ANTHROPIC_MODEL="claude-3-sonnet-20240229"
+
+# Or Azure OpenAI
+export AZURE_OPENAI_API_KEY="..."
+export AZURE_OPENAI_ENDPOINT="https://..."</code>
+                            </div>
+                        </div>
+
+                        <h3>Recommendation Types</h3>
+                        <ul>
+                            <li><strong>Hardware Optimization:</strong> GPU selection (A100, H100, T4, L4), CPU/memory right-sizing</li>
+                            <li><strong>Scaling Strategies:</strong> Auto-scaling policies, predictive scaling, spot instances</li>
+                            <li><strong>Cost Optimization:</strong> Reserved instances, scheduled scaling, resource consolidation</li>
+                        </ul>
+
+                        <div class="info-box">
+                            <p><strong>Learn More:</strong> Visit the <a href="intelligent-recommendations.html" style="color: var(--primary-color);">Intelligent Recommendations documentation</a> for detailed examples and configuration options.</p>
                         </div>
                     </section>
 

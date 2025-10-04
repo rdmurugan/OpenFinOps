@@ -1875,6 +1875,39 @@ class COODashboard:
         else:
             return {"chart_type": "strategic_initiatives", "data": initiatives_data}
 
+    def get_intelligent_recommendations(
+        self,
+        current_metrics: Optional[Dict[str, Any]] = None,
+        historical_data: Optional[List[Dict[str, Any]]] = None
+    ) -> Dict[str, Any]:
+        """
+        Get intelligent recommendations for operational optimization.
+
+        Returns hardware, scaling, and cost optimization recommendations.
+        """
+        from .recommendations_dashboard import RecommendationsDashboard
+
+        # Use provided metrics or generate from current state
+        if current_metrics is None:
+            current_metrics = {
+                'instance_count': 4,
+                'avg_cpu_utilization': 65,
+                'avg_gpu_utilization': 70,
+                'cost_per_instance_hour': 2.5,
+                'workload_type': 'inference',
+                'has_gpu': True,
+                'gpu_count': 1,
+                'requests_per_second': 25
+            }
+
+        recommendations_dash = RecommendationsDashboard()
+        return recommendations_dash.get_dashboard_data(
+            current_metrics,
+            historical_data,
+            workload_type=current_metrics.get('workload_type', 'inference'),
+            cloud_provider='aws'
+        )
+
     def export_operational_report(self, dashboard_data: Dict[str, Any], format: str = "pdf") -> str:
         """Export comprehensive operational report."""
 
