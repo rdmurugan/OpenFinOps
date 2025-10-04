@@ -66,6 +66,14 @@
         <priority>0.7</priority>
     </url>
 
+    <!-- Community -->
+    <url>
+        <loc>https://openfinops.org/community.html</loc>
+        <lastmod>2025-01-15</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>
+
     <!-- GitHub Repository -->
     <url>
         <loc>https://github.com/rdmurugan/openfinops</loc>

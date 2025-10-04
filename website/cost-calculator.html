@@ -1,0 +1,230 @@
+<!--
+    INTERACTIVE COST SAVINGS CALCULATOR
+    Add this widget to any page to help visitors calculate potential savings
+-->
+
+<div class="cost-calculator-widget" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px; border-radius: 15px; color: white; max-width: 600px; margin: 40px auto; box-shadow: 0 20px 60px rgba(102, 126, 234, 0.3);">
+    <h3 style="margin-bottom: 10px; font-size: 1.8rem;">💰 Calculate Your Savings</h3>
+    <p style="opacity: 0.9; margin-bottom: 30px;">See how much OpenFinOps can save on your AI/ML infrastructure</p>
+
+    <div style="background: rgba(255,255,255,0.1); padding: 25px; border-radius: 10px; backdrop-filter: blur(10px);">
+        <label style="display: block; margin-bottom: 8px; font-weight: 600;">Monthly Cloud Spend ($)</label>
+        <input type="number" id="monthly-spend" placeholder="e.g., 10000" min="100" step="100"
+               style="width: 100%; padding: 12px; border: none; border-radius: 8px; font-size: 1.1rem; margin-bottom: 20px;">
+
+        <label style="display: block; margin-bottom: 8px; font-weight: 600;">Primary Workload</label>
+        <select id="workload-type" style="width: 100%; padding: 12px; border: none; border-radius: 8px; font-size: 1rem; margin-bottom: 20px;">
+            <option value="training">LLM Training</option>
+            <option value="inference">Inference</option>
+            <option value="fine-tuning">Fine-tuning</option>
+            <option value="rag">RAG Pipelines</option>
+            <option value="mixed">Mixed Workload</option>
+        </select>
+
+        <label style="display: block; margin-bottom: 8px; font-weight: 600;">Cloud Provider</label>
+        <select id="cloud-provider" style="width: 100%; padding: 12px; border: none; border-radius: 8px; font-size: 1rem; margin-bottom: 25px;">
+            <option value="aws">AWS</option>
+            <option value="gcp">Google Cloud</option>
+            <option value="azure">Azure</option>
+            <option value="multi">Multi-Cloud</option>
+        </select>
+
+        <button onclick="calculateSavings()" style="width: 100%; padding: 15px; background: white; color: #667eea; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: transform 0.2s;">
+            Calculate My Savings 🚀
+        </button>
+    </div>
+
+    <div id="savings-results" style="display: none; margin-top: 25px; background: rgba(255,255,255,0.15); padding: 25px; border-radius: 10px; backdrop-filter: blur(10px);">
+        <h4 style="margin-bottom: 15px; font-size: 1.3rem;">💡 Your Estimated Savings</h4>
+
+        <div style="background: rgba(255,255,255,0.2); padding: 20px; border-radius: 10px; text-align: center; margin-bottom: 20px;">
+            <div style="font-size: 0.9rem; opacity: 0.9; margin-bottom: 5px;">Annual Savings</div>
+            <div style="font-size: 3rem; font-weight: 700;">$<span id="total-savings">0</span></div>
+            <div style="font-size: 1rem; opacity: 0.9; margin-top: 5px;"><span id="savings-percentage">0</span>% reduction</div>
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <strong>Breakdown:</strong>
+        </div>
+
+        <div style="margin-bottom: 12px; padding: 12px; background: rgba(255,255,255,0.1); border-radius: 8px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span>🎯 GPU Optimization</span>
+                <strong>$<span id="gpu-savings">0</span>/year</strong>
+            </div>
+            <div style="font-size: 0.85rem; opacity: 0.8; margin-top: 5px;">Right-sized instances + spot pricing</div>
+        </div>
+
+        <div style="margin-bottom: 12px; padding: 12px; background: rgba(255,255,255,0.1); border-radius: 8px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span>📊 Auto-Scaling</span>
+                <strong>$<span id="scaling-savings">0</span>/year</strong>
+            </div>
+            <div style="font-size: 0.85rem; opacity: 0.8; margin-top: 5px;">Dynamic capacity management</div>
+        </div>
+
+        <div style="margin-bottom: 12px; padding: 12px; background: rgba(255,255,255,0.1); border-radius: 8px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span>💰 Spot Instances</span>
+                <strong>$<span id="spot-savings">0</span>/year</strong>
+            </div>
+            <div style="font-size: 0.85rem; opacity: 0.8; margin-top: 5px;">Up to 90% off on-demand pricing</div>
+        </div>
+
+        <div style="margin-bottom: 12px; padding: 12px; background: rgba(255,255,255,0.1); border-radius: 8px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span>🤖 LLM Recommendations</span>
+                <strong>$<span id="llm-savings">0</span>/year</strong>
+            </div>
+            <div style="font-size: 0.85rem; opacity: 0.8; margin-top: 5px;">AI-powered optimization insights</div>
+        </div>
+
+        <a href="get-started.html" style="display: block; text-align: center; padding: 15px; background: white; color: #667eea; border-radius: 8px; font-weight: 700; text-decoration: none; margin-top: 20px; transition: transform 0.2s;">
+            Start Saving Now - It's Free! →
+        </a>
+    </div>
+</div>
+
+<script>
+function calculateSavings() {
+    const spend = parseFloat(document.getElementById('monthly-spend').value);
+    const workloadType = document.getElementById('workload-type').value;
+    const cloudProvider = document.getElementById('cloud-provider').value;
+
+    if (!spend || spend < 100) {
+        alert('Please enter a valid monthly spend amount (minimum $100)');
+        return;
+    }
+
+    // Savings percentages based on workload type and provider
+    const savingsRates = {
+        training: { gpu: 0.20, scaling: 0.10, spot: 0.18, llm: 0.07 },
+        inference: { gpu: 0.18, scaling: 0.15, spot: 0.12, llm: 0.05 },
+        'fine-tuning': { gpu: 0.19, scaling: 0.12, spot: 0.15, llm: 0.06 },
+        rag: { gpu: 0.16, scaling: 0.14, spot: 0.10, llm: 0.08 },
+        mixed: { gpu: 0.18, scaling: 0.12, spot: 0.14, llm: 0.06 }
+    };
+
+    // Cloud provider multipliers (some providers have better optimization potential)
+    const providerMultipliers = {
+        aws: 1.0,
+        gcp: 0.95,
+        azure: 0.98,
+        multi: 1.05 // Multi-cloud can save more through provider arbitrage
+    };
+
+    const rates = savingsRates[workloadType];
+    const multiplier = providerMultipliers[cloudProvider];
+
+    // Calculate individual savings (monthly)
+    const gpuSavings = spend * rates.gpu * multiplier;
+    const scalingSavings = spend * rates.scaling * multiplier;
+    const spotSavings = spend * rates.spot * multiplier;
+    const llmSavings = spend * rates.llm * multiplier;
+
+    const monthlyTotal = gpuSavings + scalingSavings + spotSavings + llmSavings;
+    const annualTotal = monthlyTotal * 12;
+    const savingsPercentage = ((monthlyTotal / spend) * 100).toFixed(0);
+
+    // Update UI with animations
+    document.getElementById('total-savings').textContent = annualTotal.toLocaleString('en-US', {maximumFractionDigits: 0});
+    document.getElementById('savings-percentage').textContent = savingsPercentage;
+    document.getElementById('gpu-savings').textContent = (gpuSavings * 12).toLocaleString('en-US', {maximumFractionDigits: 0});
+    document.getElementById('scaling-savings').textContent = (scalingSavings * 12).toLocaleString('en-US', {maximumFractionDigits: 0});
+    document.getElementById('spot-savings').textContent = (spotSavings * 12).toLocaleString('en-US', {maximumFractionDigits: 0});
+    document.getElementById('llm-savings').textContent = (llmSavings * 12).toLocaleString('en-US', {maximumFractionDigits: 0});
+
+    // Show results with smooth animation
+    const results = document.getElementById('savings-results');
+    results.style.display = 'block';
+    results.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+    // Track event in Google Analytics (if configured)
+    if (typeof gtag !== 'undefined') {
+        gtag('event', 'calculator_used', {
+            'event_category': 'engagement',
+            'event_label': workloadType,
+            'value': Math.round(annualTotal)
+        });
+    }
+}
+
+// Allow Enter key to trigger calculation
+document.addEventListener('DOMContentLoaded', function() {
+    const input = document.getElementById('monthly-spend');
+    if (input) {
+        input.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                calculateSavings();
+            }
+        });
+    }
+});
+</script>
+
+<style>
+.cost-calculator-widget button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.cost-calculator-widget input:focus,
+.cost-calculator-widget select:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(255,255,255,0.3);
+}
+
+.cost-calculator-widget input,
+.cost-calculator-widget select {
+    transition: all 0.2s;
+}
+
+@media (max-width: 768px) {
+    .cost-calculator-widget {
+        padding: 25px;
+        margin: 20px;
+    }
+
+    #savings-results {
+        font-size: 0.9rem;
+    }
+
+    #total-savings {
+        font-size: 2.5rem !important;
+    }
+}
+</style>
+
+<!--
+USAGE INSTRUCTIONS:
+
+1. Copy this entire file content
+2. Paste it into any page where you want the calculator
+3. It works standalone - no external dependencies needed
+4. Recommended pages:
+   - index.html (homepage)
+   - get-started.html
+   - features.html
+
+CUSTOMIZATION:
+
+- Adjust savings percentages in the savingsRates object
+- Change colors by modifying the gradient and background colors
+- Modify provider multipliers based on real data
+- Add more workload types or cloud providers
+
+ANALYTICS:
+
+The calculator automatically tracks usage in Google Analytics (if configured).
+Event: 'calculator_used'
+Category: 'engagement'
+Label: workload type
+Value: calculated annual savings
+
+TESTING:
+
+Try these test values:
+- $10,000/month, Training, AWS → ~$66,000/year (55% savings)
+- $5,000/month, Inference, GCP → ~$30,000/year (50% savings)
+- $20,000/month, Mixed, Multi-cloud → ~$126,000/year (52% savings)
+-->
