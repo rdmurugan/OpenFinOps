@@ -237,7 +237,7 @@ If you use OpenFinOps in your research, please cite it using the following refer
 ```bibtex
 @software{openfinops2024,
   title = {{OpenFinOps}: Open Source FinOps Platform for AI/ML Cost Observability and Optimization},
-  author = {Murugan, Durai and {OpenFinOps Contributors}},
+  author = {Durai and {OpenFinOps Contributors}},
   year = {2024},
   month = {10},
   version = {0.1.0},
