@@ -100,3 +100,10 @@ service-account.json
 # Claude Code files
 CLAUDE.md
 .claude/
+
+# Internal documentation/summary files
+SEO_MARKETING_SUMMARY.md
+QUICK_ACTION_GUIDE.md
+SEO_IMPLEMENTATION_CHECKLIST.md
+WEBSITE_UPDATE_SUMMARY.md
+INTELLIGENT_RECOMMENDATIONS_SUMMARY.md

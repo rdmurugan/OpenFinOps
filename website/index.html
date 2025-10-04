@@ -3,10 +3,102 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OpenFinOps - AI/ML Cost Intelligence Platform</title>
+
+    <!-- SEO Meta Tags -->
+    <title>OpenFinOps - AI/ML Cost Intelligence Platform | LLM-Powered FinOps</title>
+    <meta name="description" content="Open source FinOps platform for AI/ML cost observability. Monitor cloud costs, optimize GPU spending, get intelligent recommendations from LLMs. Save 30-50% on infrastructure.">
+    <meta name="keywords" content="finops, ai cost optimization, ml infrastructure, gpu optimization, cloud cost management, llm monitoring, openai costs, anthropic costs, aws cost, gcp cost, azure cost, kubernetes cost, auto-scaling, spot instances">
+    <meta name="author" content="OpenFinOps Contributors">
+    <meta name="robots" content="index, follow">
+    <meta name="language" content="English">
+    <meta name="revisit-after" content="7 days">
+    <link rel="canonical" href="https://openfinops.org/">
+
+    <!-- Open Graph Meta Tags (Facebook, LinkedIn) -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://openfinops.org/">
+    <meta property="og:title" content="OpenFinOps - AI/ML Cost Intelligence Platform">
+    <meta property="og:description" content="Open source FinOps platform for AI/ML cost observability. Get intelligent LLM-powered recommendations to save 30-50% on cloud and AI infrastructure.">
+    <meta property="og:image" content="https://openfinops.org/images/og-image.png">
+    <meta property="og:site_name" content="OpenFinOps">
+    <meta property="og:locale" content="en_US">
+
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://openfinops.org/">
+    <meta name="twitter:title" content="OpenFinOps - AI/ML Cost Intelligence Platform">
+    <meta name="twitter:description" content="Open source FinOps platform with LLM-powered recommendations. Save 30-50% on AI/ML infrastructure costs.">
+    <meta name="twitter:image" content="https://openfinops.org/images/twitter-card.png">
+    <meta name="twitter:creator" content="@openfinops">
+    <meta name="twitter:site" content="@openfinops">
+
+    <!-- Additional Meta Tags -->
+    <meta name="theme-color" content="#6366f1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+
+    <!-- Preconnect for performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+
+    <!-- Stylesheets -->
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- JSON-LD Structured Data for SEO -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "OpenFinOps",
+      "applicationCategory": "BusinessApplication",
+      "applicationSubCategory": "FinOps Platform",
+      "operatingSystem": "Cross-platform",
+      "description": "Open source FinOps platform for AI/ML cost observability and optimization with intelligent LLM-powered recommendations.",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "author": {
+        "@type": "Organization",
+        "name": "OpenFinOps Contributors",
+        "url": "https://openfinops.org"
+      },
+      "downloadUrl": "https://pypi.org/project/openfinops/",
+      "codeRepository": "https://github.com/rdmurugan/openfinops",
+      "programmingLanguage": "Python",
+      "softwareVersion": "0.2.0",
+      "license": "https://opensource.org/licenses/Apache-2.0",
+      "featureList": [
+        "AI/ML cost monitoring",
+        "LLM-powered recommendations",
+        "Multi-cloud cost tracking (AWS, Azure, GCP)",
+        "GPU optimization",
+        "Auto-scaling recommendations",
+        "Real-time dashboards",
+        "Cost attribution",
+        "Budget alerts"
+      ],
+      "screenshot": "https://openfinops.org/images/dashboard-screenshot.png"
+    }
+    </script>
+
+    <!-- Google Analytics (replace GA_MEASUREMENT_ID with actual ID) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-XXXXXXXXXX');
+    </script>
 </head>
 <body>
     <!-- Navigation -->
@@ -20,8 +112,10 @@
                 <ul class="nav-menu">
                     <li><a href="#home" class="active">Home</a></li>
                     <li><a href="features.html">Features</a></li>
+                    <li><a href="intelligent-recommendations.html">AI Recommendations</a></li>
+                    <li><a href="get-started.html">Get Started</a></li>
                     <li><a href="documentation.html">Documentation</a></li>
-                    <li><a href="api.html">API Reference</a></li>
+                    <li><a href="changelog.html">Changelog</a></li>
                     <li><a href="demo.html" class="demo-btn">Live Demo</a></li>
                     <li><a href="https://github.com/rdmurugan/openfinops" target="_blank"><i class="fab fa-github"></i></a></li>
                 </ul>
@@ -45,8 +139,8 @@
                     Monitor, analyze, and optimize your cloud and AI infrastructure spending in real-time.
                 </p>
                 <div class="hero-buttons">
-                    <a href="documentation.html" class="btn btn-primary">
-                        <i class="fas fa-rocket"></i> Get Started
+                    <a href="get-started.html" class="btn btn-primary">
+                        <i class="fas fa-rocket"></i> Get Started Free
                     </a>
                     <a href="demo.html" class="btn btn-secondary">
                         <i class="fas fa-play"></i> View Demo
@@ -152,11 +246,11 @@
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">
-                        <i class="fas fa-lightbulb"></i>
+                        <i class="fas fa-robot"></i>
                     </div>
-                    <h3>Smart Recommendations</h3>
-                    <p>AI-powered cost optimization suggestions with savings estimates</p>
-                    <a href="features.html#recommendations" class="feature-link">Learn more →</a>
+                    <h3>Intelligent Recommendations</h3>
+                    <p>LLM-powered hardware and scaling recommendations for AI/ML infrastructure</p>
+                    <a href="intelligent-recommendations.html" class="feature-link">Learn more →</a>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">

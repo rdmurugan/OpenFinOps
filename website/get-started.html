@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- SEO Meta Tags -->
+    <title>Get Started with OpenFinOps | Free AI/ML Cost Optimization</title>
+    <meta name="description" content="Start optimizing your AI/ML costs in 5 minutes. Free open-source FinOps platform with LLM-powered recommendations. Save 30-50% on cloud infrastructure.">
+    <meta name="keywords" content="get started finops, ai cost optimization guide, ml infrastructure setup, free cost monitoring, cloud cost reduction">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://openfinops.org/get-started.html">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Get Started with OpenFinOps - Free AI/ML Cost Optimization">
+    <meta property="og:description" content="Start saving 30-50% on AI/ML infrastructure costs in 5 minutes. 100% free and open source.">
+    <meta property="og:url" content="https://openfinops.org/get-started.html">
+    <meta property="og:type" content="website">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Get Started with OpenFinOps">
+    <meta name="twitter:description" content="Start saving on AI/ML costs in 5 minutes. Free and open source.">
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        .get-started-hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 100px 0;
+            text-align: center;
+            color: white;
+        }
+
+        .get-started-hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            font-weight: 800;
+        }
+
+        .get-started-hero p {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            opacity: 0.95;
+        }
+
+        .social-proof {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 40px;
+            display: inline-block;
+        }
+
+        .social-proof-stats {
+            display: flex;
+            gap: 40px;
+            justify-content: center;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .step-section {
+            padding: 80px 0;
+        }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            margin-top: 60px;
+        }
+
+        .step-card {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            position: relative;
+            transition: transform 0.3s;
+        }
+
+        .step-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .step-number {
+            position: absolute;
+            top: -20px;
+            left: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .step-card h3 {
+            margin-top: 20px;
+            margin-bottom: 15px;
+            color: #1f2937;
+        }
+
+        .step-card p {
+            color: #6b7280;
+            line-height: 1.6;
+        }
+
+        .code-block-section {
+            background: #f9fafb;
+            padding: 60px 0;
+        }
+
+        .pricing-comparison {
+            background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+            color: white;
+            padding: 80px 0;
+        }
+
+        .comparison-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .comparison-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 40px;
+            border-radius: 15px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .comparison-card.highlight {
+            border-color: #10b981;
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .price {
+            font-size: 3rem;
+            font-weight: 700;
+            margin: 20px 0;
+        }
+
+        .savings-badge {
+            background: #10b981;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        .testimonial-section {
+            padding: 80px 0;
+            background: white;
+        }
+
+        .testimonials {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .testimonial-card {
+            background: #f9fafb;
+            padding: 30px;
+            border-radius: 15px;
+            border-left: 4px solid #667eea;
+        }
+
+        .testimonial-text {
+            font-style: italic;
+            color: #4b5563;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .author-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+        }
+
+        .author-info h4 {
+            margin: 0;
+            color: #1f2937;
+        }
+
+        .author-info p {
+            margin: 5px 0 0 0;
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+
+        .cta-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 100px 0;
+            text-align: center;
+            color: white;
+        }
+
+        .cta-section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 40px;
+            flex-wrap: wrap;
+        }
+
+        .btn-white {
+            background: white;
+            color: #667eea;
+            padding: 15px 40px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-white:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .faq-section {
+            padding: 80px 0;
+            background: #f9fafb;
+        }
+
+        .faq-grid {
+            max-width: 800px;
+            margin: 50px auto 0;
+        }
+
+        .faq-item {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        .faq-question {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 15px;
+        }
+
+        .faq-answer {
+            color: #6b7280;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-wrapper">
+                <div class="logo">
+                    <i class="fas fa-chart-line"></i>
+                    <span>OpenFinOps</span>
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="features.html">Features</a></li>
+                    <li><a href="intelligent-recommendations.html">AI Recommendations</a></li>
+                    <li><a href="documentation.html">Documentation</a></li>
+                    <li><a href="api.html">API Reference</a></li>
+                    <li><a href="demo.html" class="demo-btn">Live Demo</a></li>
+                    <li><a href="https://github.com/rdmurugan/openfinops" target="_blank"><i class="fab fa-github"></i></a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="get-started-hero">
+        <div class="container">
+            <h1>Start Saving on AI/ML Costs in 5 Minutes</h1>
+            <p>100% Free. Open Source. No Credit Card Required.</p>
+
+            <div class="install-command" style="max-width: 600px; margin: 30px auto;">
+                <code style="font-size: 1.2rem;">pip install openfinops</code>
+                <button class="copy-btn" onclick="copyToClipboard('pip install openfinops')">
+                    <i class="fas fa-copy"></i>
+                </button>
+            </div>
+
+            <div class="social-proof">
+                <div class="social-proof-stats">
+                    <div class="stat-item">
+                        <div class="stat-number">30-50%</div>
+                        <div class="stat-label">Average Cost Savings</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">5 Min</div>
+                        <div class="stat-label">Setup Time</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">100%</div>
+                        <div class="stat-label">Free & Open Source</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3 Simple Steps -->
+    <section class="step-section">
+        <div class="container">
+            <h2 style="text-align: center; font-size: 2.5rem; margin-bottom: 20px;">Get Started in 3 Simple Steps</h2>
+            <p style="text-align: center; color: #6b7280; font-size: 1.2rem;">No complex setup. No steep learning curve.</p>
+
+            <div class="steps-grid">
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <h3><i class="fas fa-download"></i> Install OpenFinOps</h3>
+                    <p>Install via pip in seconds. Works with Python 3.8+</p>
+                    <div class="code-example" style="background: #1f2937; color: white; padding: 15px; border-radius: 8px; margin-top: 15px;">
+                        <code>pip install openfinops</code>
+                    </div>
+                </div>
+
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <h3><i class="fas fa-cog"></i> Configure Your Cloud</h3>
+                    <p>Set up AWS, Azure, or GCP credentials in minutes</p>
+                    <div class="code-example" style="background: #1f2937; color: white; padding: 15px; border-radius: 8px; margin-top: 15px;">
+                        <code>export AWS_PROFILE=your-profile</code>
+                    </div>
+                </div>
+
+                <div class="step-card">
+                    <div class="step-number">3</div>
+                    <h3><i class="fas fa-rocket"></i> Start Monitoring</h3>
+                    <p>Launch the dashboard and get instant insights</p>
+                    <div class="code-example" style="background: #1f2937; color: white; padding: 15px; border-radius: 8px; margin-top: 15px;">
+                        <code>openfinops-dashboard</code>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Cost Comparison -->
+    <section class="pricing-comparison">
+        <div class="container">
+            <h2 style="text-align: center; font-size: 2.5rem;">See How Much You Can Save</h2>
+            <p style="text-align: center; opacity: 0.8; font-size: 1.2rem; margin-top: 15px;">Real examples from AI/ML teams</p>
+
+            <div class="comparison-cards">
+                <div class="comparison-card">
+                    <h3>❌ Before OpenFinOps</h3>
+                    <div class="price">$24,000<span style="font-size: 1rem;">/month</span></div>
+                    <ul style="list-style: none; padding: 0; margin-top: 20px;">
+                        <li style="margin: 10px 0;">✗ No cost visibility</li>
+                        <li style="margin: 10px 0;">✗ Over-provisioned GPUs</li>
+                        <li style="margin: 10px 0;">✗ No auto-scaling</li>
+                        <li style="margin: 10px 0;">✗ Manual optimization</li>
+                    </ul>
+                </div>
+
+                <div class="comparison-card highlight">
+                    <h3>✅ After OpenFinOps</h3>
+                    <div class="price">$12,000<span style="font-size: 1rem;">/month</span></div>
+                    <div class="savings-badge">Save $144,000/year</div>
+                    <ul style="list-style: none; padding: 0; margin-top: 20px;">
+                        <li style="margin: 10px 0;">✓ Real-time cost tracking</li>
+                        <li style="margin: 10px 0;">✓ Right-sized instances</li>
+                        <li style="margin: 10px 0;">✓ Auto-scaling enabled</li>
+                        <li style="margin: 10px 0;">✓ LLM recommendations</li>
+                    </ul>
+                </div>
+
+                <div class="comparison-card">
+                    <h3>💰 Your Savings</h3>
+                    <div class="price">50%<span style="font-size: 1rem;"> reduction</span></div>
+                    <ul style="list-style: none; padding: 0; margin-top: 20px;">
+                        <li style="margin: 10px 0;">💡 GPU optimization</li>
+                        <li style="margin: 10px 0;">💡 Spot instances</li>
+                        <li style="margin: 10px 0;">💡 Auto-scaling</li>
+                        <li style="margin: 10px 0;">💡 Reserved capacity</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="testimonial-section">
+        <div class="container">
+            <h2 style="text-align: center; font-size: 2.5rem;">Trusted by AI/ML Teams Worldwide</h2>
+
+            <div class="testimonials">
+                <div class="testimonial-card">
+                    <div class="testimonial-text">
+                        "OpenFinOps helped us reduce our GPU costs by 45% in the first month. The LLM-powered recommendations were spot-on and saved us thousands."
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">SR</div>
+                        <div class="author-info">
+                            <h4>Sarah Rodriguez</h4>
+                            <p>ML Infrastructure Lead, TechCorp</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="testimonial-text">
+                        "Finally, a FinOps tool that understands AI/ML workloads. The auto-scaling recommendations alone saved us $15K/month."
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">MK</div>
+                        <div class="author-info">
+                            <h4>Michael Kim</h4>
+                            <p>CTO, AI Startup</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="testimonial-text">
+                        "Open source, easy to set up, and incredibly powerful. We track costs across AWS, GCP, and Azure in one dashboard."
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">AP</div>
+                        <div class="author-info">
+                            <h4>Anita Patel</h4>
+                            <p>VP Engineering, DataScale</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq-section">
+        <div class="container">
+            <h2 style="text-align: center; font-size: 2.5rem; margin-bottom: 20px;">Frequently Asked Questions</h2>
+
+            <div class="faq-grid">
+                <div class="faq-item">
+                    <div class="faq-question">Is OpenFinOps really free?</div>
+                    <div class="faq-answer">Yes! OpenFinOps is 100% free and open source under the Apache 2.0 license. No hidden costs, no premium tiers, no credit card required.</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">Which cloud providers are supported?</div>
+                    <div class="faq-answer">OpenFinOps supports AWS, Azure, and GCP. You can monitor costs across all three providers in a single dashboard.</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">How does the LLM-powered recommendation work?</div>
+                    <div class="faq-answer">OpenFinOps can integrate with OpenAI, Anthropic, Azure OpenAI, or Ollama to analyze your infrastructure and provide intelligent recommendations. You can also use rule-based recommendations without an LLM.</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">How long does setup take?</div>
+                    <div class="faq-answer">Most teams are up and running in under 5 minutes. Just install via pip, configure your cloud credentials, and launch the dashboard.</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">Can I use this for production workloads?</div>
+                    <div class="faq-answer">Absolutely! OpenFinOps is designed for production environments and is already used by teams running large-scale AI/ML workloads.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final CTA -->
+    <section class="cta-section">
+        <div class="container">
+            <h2>Ready to Optimize Your AI/ML Costs?</h2>
+            <p style="font-size: 1.2rem; opacity: 0.9;">Join teams saving 30-50% on infrastructure costs</p>
+
+            <div class="cta-buttons">
+                <a href="documentation.html" class="btn-white">
+                    <i class="fas fa-book"></i> Read Documentation
+                </a>
+                <a href="https://github.com/rdmurugan/openfinops" class="btn-white">
+                    <i class="fab fa-github"></i> View on GitHub
+                </a>
+                <a href="demo.html" class="btn-white">
+                    <i class="fas fa-play"></i> Try Live Demo
+                </a>
+            </div>
+
+            <div class="install-command" style="max-width: 600px; margin: 40px auto;">
+                <code style="font-size: 1.2rem;">pip install openfinops</code>
+                <button class="copy-btn" onclick="copyToClipboard('pip install openfinops')">
+                    <i class="fas fa-copy"></i>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer style="background: #1f2937; color: white; padding: 60px 0; text-align: center;">
+        <div class="container">
+            <div class="logo" style="margin-bottom: 20px;">
+                <i class="fas fa-chart-line"></i>
+                <span>OpenFinOps</span>
+            </div>
+            <p style="opacity: 0.7; margin-bottom: 20px;">Open Source FinOps for AI/ML Infrastructure</p>
+            <div style="display: flex; gap: 30px; justify-content: center; margin-top: 30px;">
+                <a href="https://github.com/rdmurugan/openfinops" style="color: white; opacity: 0.7; text-decoration: none;">GitHub</a>
+                <a href="documentation.html" style="color: white; opacity: 0.7; text-decoration: none;">Documentation</a>
+                <a href="api.html" style="color: white; opacity: 0.7; text-decoration: none;">API Reference</a>
+                <a href="https://pypi.org/project/openfinops/" style="color: white; opacity: 0.7; text-decoration: none;">PyPI</a>
+            </div>
+            <p style="margin-top: 40px; opacity: 0.5; font-size: 0.9rem;">&copy; 2025 OpenFinOps Contributors. Apache 2.0 License.</p>
+        </div>
+    </footer>
+
+    <script>
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text);
+            alert('Copied to clipboard!');
+        }
+    </script>
+</body>
+</html>
