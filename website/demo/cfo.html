@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CFO Dashboard - OpenFinOps Demo</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0a0f1e 0%, #1a1f2e 100%);
+            color: white;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .dashboard-header {
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .dashboard-header h1 {
+            font-size: 2.5rem;
+            margin: 0;
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .back-button {
+            padding: 0.75rem 1.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(-5px);
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .metric-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .metric-card:hover {
+            border-color: #fbbf24;
+            box-shadow: 0 8px 32px rgba(251, 191, 36, 0.2);
+        }
+
+        .metric-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .metric-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .metric-subtitle {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 2rem;
+        }
+
+        .chart-card h3 {
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            color: white;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+
+        .recommendations-section {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .recommendations-section h3 {
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            color: white;
+        }
+
+        .recommendation-item {
+            background: rgba(16, 185, 129, 0.1);
+            border-left: 4px solid #10b981;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+        }
+
+        .recommendation-item h4 {
+            margin: 0 0 0.5rem 0;
+            color: #10b981;
+        }
+
+        .recommendation-item p {
+            margin: 0.5rem 0;
+            color: var(--text-secondary);
+        }
+
+        .savings-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-top: 0.5rem;
+        }
+
+        .department-table {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            overflow-x: auto;
+        }
+
+        .department-table h3 {
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            color: white;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: rgba(251, 191, 36, 0.1);
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+        }
+
+        th {
+            color: #fbbf24;
+            font-weight: 600;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        tbody tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #10b981, #059669);
+            border-radius: 4px;
+            transition: width 0.3s;
+        }
+
+        .progress-fill.over-budget {
+            background: linear-gradient(90deg, #ef4444, #dc2626);
+        }
+
+        @media (max-width: 768px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .dashboard-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="dashboard-header">
+            <h1>
+                <i class="fas fa-dollar-sign"></i> CFO Executive Dashboard
+            </h1>
+            <a href="../demo-static.html" class="back-button">
+                <i class="fas fa-arrow-left"></i> Back to Demos
+            </a>
+        </div>
+
+        <!-- Financial Metrics -->
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-icon">
+                    <i class="fas fa-wallet"></i>
+                </div>
+                <div class="metric-label">Annual Budget</div>
+                <div class="metric-value">$1.8M</div>
+                <div class="metric-subtitle">Q4 2024 - Q3 2025</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="metric-label">YTD Spending</div>
+                <div class="metric-value">$892K</div>
+                <div class="metric-subtitle">49.6% of annual budget</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-icon">
+                    <i class="fas fa-piggy-bank"></i>
+                </div>
+                <div class="metric-label">Cost Savings (YTD)</div>
+                <div class="metric-value">$143K</div>
+                <div class="metric-subtitle">13.8% reduction vs forecast</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-icon">
+                    <i class="fas fa-percentage"></i>
+                </div>
+                <div class="metric-label">Cloud ROI</div>
+                <div class="metric-value">247%</div>
+                <div class="metric-subtitle">Revenue per cloud dollar</div>
+            </div>
+        </div>
+
+        <!-- Budget Analysis Charts -->
+        <div class="charts-grid">
+            <div class="chart-card">
+                <h3>Budget vs Actual (Monthly)</h3>
+                <div class="chart-container">
+                    <canvas id="budgetActualChart"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <h3>Cost Trend & Forecast</h3>
+                <div class="chart-container">
+                    <canvas id="forecastChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="charts-grid">
+            <div class="chart-card">
+                <h3>Department Budget Allocation</h3>
+                <div class="chart-container">
+                    <canvas id="departmentAllocationChart"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <h3>Cost Optimization Impact</h3>
+                <div class="chart-container">
+                    <canvas id="optimizationChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cost Optimization Recommendations -->
+        <div class="recommendations-section">
+            <h3><i class="fas fa-lightbulb"></i> AI-Powered Cost Optimization Recommendations</h3>
+
+            <div class="recommendation-item">
+                <h4>Right-size EC2 Instances</h4>
+                <p>Analysis shows 23 EC2 instances running at <15% CPU utilization for the past 30 days. Downsize to smaller instance types to optimize costs.</p>
+                <p><strong>Affected Services:</strong> Production Web Servers, Dev Environment, Analytics Cluster</p>
+                <span class="savings-badge">Potential Savings: $3,240/month</span>
+            </div>
+
+            <div class="recommendation-item">
+                <h4>Optimize Snowflake Warehouse Auto-Suspend</h4>
+                <p>Data warehouses remain idle for 40% of billable time. Reduce auto-suspend timeout from 10 minutes to 2 minutes.</p>
+                <p><strong>Affected Resources:</strong> ANALYTICS_WH, REPORTING_WH, DEV_WH</p>
+                <span class="savings-badge">Potential Savings: $4,890/month</span>
+            </div>
+
+            <div class="recommendation-item">
+                <h4>Implement Databricks Spot Instances</h4>
+                <p>Switch non-production Databricks clusters to spot instances with fallback to on-demand. Current workloads are fault-tolerant and suitable for spot.</p>
+                <p><strong>Affected Clusters:</strong> ml-training, data-pipeline, etl-jobs</p>
+                <span class="savings-badge">Potential Savings: $5,120/month</span>
+            </div>
+
+            <div class="recommendation-item">
+                <h4>Consolidate S3 Storage Classes</h4>
+                <p>Move 12TB of S3 data accessed less than once per quarter to S3 Glacier for long-term archival.</p>
+                <p><strong>Affected Buckets:</strong> legacy-data, historical-logs, backup-archives</p>
+                <span class="savings-badge">Potential Savings: $2,340/month</span>
+            </div>
+
+            <div class="recommendation-item">
+                <h4>Review Unused Reserved Capacity</h4>
+                <p>3 Azure SQL reserved capacity units are underutilized (28% usage). Consider converting to pay-as-you-go or reselling capacity.</p>
+                <p><strong>Reserved Instances:</strong> sql-prod-reserved-01, sql-prod-reserved-02, sql-prod-reserved-03</p>
+                <span class="savings-badge">Potential Savings: $1,890/month</span>
+            </div>
+        </div>
+
+        <!-- Department Cost Attribution -->
+        <div class="department-table">
+            <h3>Department Cost Attribution</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Department</th>
+                        <th>Monthly Budget</th>
+                        <th>Actual Spend</th>
+                        <th>Variance</th>
+                        <th>Budget Utilization</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><i class="fas fa-chart-bar"></i> Data Engineering</td>
+                        <td>$45,000</td>
+                        <td>$52,340</td>
+                        <td style="color: #ef4444;">+$7,340</td>
+                        <td>
+                            <div>116%</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill over-budget" style="width: 100%;"></div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><i class="fas fa-robot"></i> Machine Learning</td>
+                        <td>$38,000</td>
+                        <td>$34,220</td>
+                        <td style="color: #10b981;">-$3,780</td>
+                        <td>
+                            <div>90%</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 90%;"></div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><i class="fas fa-code"></i> Product Development</td>
+                        <td>$28,000</td>
+                        <td>$24,890</td>
+                        <td style="color: #10b981;">-$3,110</td>
+                        <td>
+                            <div>89%</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 89%;"></div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><i class="fas fa-database"></i> Data Analytics</td>
+                        <td>$22,000</td>
+                        <td>$19,450</td>
+                        <td style="color: #10b981;">-$2,550</td>
+                        <td>
+                            <div>88%</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 88%;"></div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><i class="fas fa-flask"></i> Research & Development</td>
+                        <td>$18,000</td>
+                        <td>$14,230</td>
+                        <td style="color: #10b981;">-$3,770</td>
+                        <td>
+                            <div>79%</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 79%;"></div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><i class="fas fa-server"></i> Infrastructure</td>
+                        <td>$15,000</td>
+                        <td>$13,670</td>
+                        <td style="color: #10b981;">-$1,330</td>
+                        <td>
+                            <div>91%</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 91%;"></div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Budget vs Actual Chart
+        const ctxBudget = document.getElementById('budgetActualChart').getContext('2d');
+        new Chart(ctxBudget, {
+            type: 'bar',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                datasets: [
+                    {
+                        label: 'Budget',
+                        data: [150000, 150000, 150000, 150000, 150000, 150000, 150000, 150000, 150000, 150000, 150000, 150000],
+                        backgroundColor: 'rgba(251, 191, 36, 0.5)',
+                        borderColor: 'rgba(251, 191, 36, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Actual',
+                        data: [142300, 138450, 145230, 149890, 143560, 127543, 0, 0, 0, 0, 0, 0],
+                        backgroundColor: 'rgba(0, 212, 170, 0.8)',
+                        borderColor: 'rgba(0, 212, 170, 1)',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: 'white',
+                            font: { size: 12 }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': $' + context.parsed.y.toLocaleString();
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            color: 'rgba(255, 255, 255, 0.7)',
+                            callback: function(value) {
+                                return '$' + (value / 1000) + 'k';
+                            }
+                        },
+                        grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                    },
+                    x: {
+                        ticks: { color: 'rgba(255, 255, 255, 0.7)' },
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+
+        // Forecast Chart
+        const ctxForecast = document.getElementById('forecastChart').getContext('2d');
+        new Chart(ctxForecast, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                datasets: [
+                    {
+                        label: 'Actual',
+                        data: [142300, 138450, 145230, 149890, 143560, 127543, null, null, null, null, null, null],
+                        borderColor: 'rgba(0, 212, 170, 1)',
+                        backgroundColor: 'rgba(0, 212, 170, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        borderWidth: 2
+                    },
+                    {
+                        label: 'Forecast',
+                        data: [null, null, null, null, null, 127543, 132000, 135000, 138000, 141000, 144000, 147000],
+                        borderColor: 'rgba(251, 191, 36, 1)',
+                        backgroundColor: 'rgba(251, 191, 36, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        borderWidth: 2,
+                        borderDash: [5, 5]
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: 'white',
+                            font: { size: 12 }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        ticks: {
+                            color: 'rgba(255, 255, 255, 0.7)',
+                            callback: function(value) {
+                                return '$' + (value / 1000) + 'k';
+                            }
+                        },
+                        grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                    },
+                    x: {
+                        ticks: { color: 'rgba(255, 255, 255, 0.7)' },
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+
+        // Department Allocation Pie Chart
+        const ctxDept = document.getElementById('departmentAllocationChart').getContext('2d');
+        new Chart(ctxDept, {
+            type: 'doughnut',
+            data: {
+                labels: ['Data Engineering', 'Machine Learning', 'Product Dev', 'Data Analytics', 'R&D', 'Infrastructure'],
+                datasets: [{
+                    data: [52340, 34220, 24890, 19450, 14230, 13670],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.8)',
+                        'rgba(54, 162, 235, 0.8)',
+                        'rgba(255, 206, 86, 0.8)',
+                        'rgba(75, 192, 192, 0.8)',
+                        'rgba(153, 102, 255, 0.8)',
+                        'rgba(255, 159, 64, 0.8)'
+                    ],
+                    borderColor: 'rgba(255, 255, 255, 0.2)',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: {
+                            color: 'white',
+                            padding: 15,
+                            font: { size: 11 }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.label + ': $' + context.parsed.toLocaleString();
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Optimization Impact Chart
+        const ctxOpt = document.getElementById('optimizationChart').getContext('2d');
+        new Chart(ctxOpt, {
+            type: 'bar',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [
+                    {
+                        label: 'Baseline Cost',
+                        data: [150000, 151000, 152000, 153000, 154000, 155000],
+                        backgroundColor: 'rgba(239, 68, 68, 0.6)',
+                        borderColor: 'rgba(239, 68, 68, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Optimized Cost',
+                        data: [142300, 138450, 145230, 149890, 143560, 127543],
+                        backgroundColor: 'rgba(16, 185, 129, 0.8)',
+                        borderColor: 'rgba(16, 185, 129, 1)',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: 'white',
+                            font: { size: 12 }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': $' + context.parsed.y.toLocaleString();
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        ticks: {
+                            color: 'rgba(255, 255, 255, 0.7)',
+                            callback: function(value) {
+                                return '$' + (value / 1000) + 'k';
+                            }
+                        },
+                        grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                    },
+                    x: {
+                        ticks: { color: 'rgba(255, 255, 255, 0.7)' },
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

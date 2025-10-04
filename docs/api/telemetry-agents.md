@@ -4,11 +4,13 @@ Complete API reference for OpenFinOps multi-cloud telemetry agents.
 
 ## Overview
 
-OpenFinOps provides telemetry agents for collecting metrics from multiple cloud providers:
-- **AWS Telemetry Agent**: Amazon Web Services metrics
-- **Azure Telemetry Agent**: Microsoft Azure metrics
-- **GCP Telemetry Agent**: Google Cloud Platform metrics
-- **Generic Telemetry Agent**: Custom data sources
+OpenFinOps provides telemetry agents for automatically collecting metrics and costs from cloud providers:
+- **AWS Telemetry Agent**: Amazon Web Services (EC2, EKS, Lambda, RDS, S3)
+- **Azure Telemetry Agent**: Microsoft Azure (VMs, AKS, Functions, SQL, Storage)
+- **GCP Telemetry Agent**: Google Cloud Platform (Compute, GKE, Functions, SQL, Storage)
+- **Generic Telemetry Agent**: Custom data sources and on-premises infrastructure
+
+**Key Concept**: Agents run as **separate processes** that automatically discover resources, collect metrics, calculate costs, and send data to your OpenFinOps server.
 
 ## Table of Contents
 
@@ -16,16 +18,15 @@ OpenFinOps provides telemetry agents for collecting metrics from multiple cloud 
 - [Azure Telemetry Agent](#azure-telemetry-agent)
 - [GCP Telemetry Agent](#gcp-telemetry-agent)
 - [Generic Telemetry Agent](#generic-telemetry-agent)
-- [Agent Configuration](#agent-configuration)
-- [Deployment](#deployment)
+- [Deployment Guide](#deployment-guide)
 
 ---
 
 ## AWS Telemetry Agent
 
-Collect metrics from AWS services.
+Automatically collect metrics and costs from AWS.
 
-### Class: `AWSTelemeetryAgent`
+### Class: `AWSTelemetryAgent`
 
 **Location**: `agents.aws_telemetry_agent`
 
@@ -33,9 +34,8 @@ Collect metrics from AWS services.
 from agents.aws_telemetry_agent import AWSTelemetryAgent
 
 agent = AWSTelemetryAgent(
-    aws_access_key_id="YOUR_ACCESS_KEY",
-    aws_secret_access_key="YOUR_SECRET_KEY",
-    region="us-west-2"
+    openfinops_endpoint="http://localhost:8080",
+    aws_region="us-west-2"
 )
 ```
 
@@ -43,117 +43,137 @@ agent = AWSTelemetryAgent(
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `aws_access_key_id` | str | Yes | AWS access key ID |
-| `aws_secret_access_key` | str | Yes | AWS secret access key |
-| `region` | str | No | AWS region (default: us-east-1) |
-| `session_token` | str | No | Temporary session token |
+| `openfinops_endpoint` | str | No | OpenFinOps server URL (default: http://localhost:8080) |
+| `server_url` | str | No | Alias for openfinops_endpoint |
+| `aws_region` | str | No | AWS region (default: us-east-1) |
+| `region` | str | No | Alias for aws_region |
+| `agent_id` | str | No | Agent identifier (auto-generated if not provided) |
+
+**Authentication**: Uses boto3 default credential chain (environment variables, AWS config, IAM role, etc.)
 
 #### Methods
 
-##### `collect_ec2_metrics(instance_ids=None)`
+##### `register_agent()`
 
-Collect EC2 instance metrics.
+Register the agent with the OpenFinOps server.
 
 ```python
-# All EC2 instances
-metrics = agent.collect_ec2_metrics()
-
-# Specific instances
-metrics = agent.collect_ec2_metrics(
-    instance_ids=['i-1234567890abcdef0', 'i-0987654321fedcba0']
-)
-
-for instance in metrics:
-    print(f"Instance: {instance['instance_id']}")
-    print(f"  CPU: {instance['cpu_utilization']:.1f}%")
-    print(f"  Memory: {instance['memory_utilization']:.1f}%")
-    print(f"  Network In: {instance['network_in']} bytes")
-    print(f"  Network Out: {instance['network_out']} bytes")
-    print(f"  Cost (hourly): ${instance['cost_per_hour']:.4f}")
+if agent.register_agent():
+    print("✓ Agent registered successfully")
+else:
+    print("✗ Registration failed")
 ```
 
-**Returns:** `list[dict]` - List of instance metrics
+**Returns:** `bool` - Registration success
 
 ---
 
-##### `collect_sagemaker_metrics(endpoint_name=None)`
+##### `collect_telemetry_data()`
 
-Collect SageMaker endpoint metrics.
+Collect telemetry data from AWS (one-time collection).
 
 ```python
-# All endpoints
-metrics = agent.collect_sagemaker_metrics()
+data = agent.collect_telemetry_data()
 
-# Specific endpoint
-metrics = agent.collect_sagemaker_metrics(endpoint_name="my-model-endpoint")
-
-for endpoint in metrics:
-    print(f"Endpoint: {endpoint['name']}")
-    print(f"  Invocations: {endpoint['invocations']}")
-    print(f"  Model Latency: {endpoint['model_latency_ms']:.2f}ms")
-    print(f"  4xx Errors: {endpoint['4xx_errors']}")
-    print(f"  5xx Errors: {endpoint['5xx_errors']}")
-    print(f"  Cost (hourly): ${endpoint['cost_per_hour']:.4f}")
+print(f"Collected from {len(data['services'])} services")
+print(f"Total EC2 instances: {data['services']['ec2']['total_instances']}")
+print(f"Total hourly cost: ${data['summary']['total_hourly_cost']:.2f}")
 ```
+
+**Returns:** `dict` - Telemetry data including:
+- EC2 instances with CPU usage and costs
+- EKS clusters and node groups
+- Lambda functions and invocations
+- RDS databases
+- S3 buckets and storage costs
 
 ---
 
-##### `collect_s3_metrics(bucket_names=None)`
+##### `send_telemetry_data(data)`
 
-Collect S3 storage metrics.
+Send telemetry data to OpenFinOps server.
 
 ```python
-metrics = agent.collect_s3_metrics(bucket_names=["my-training-data", "my-models"])
-
-for bucket in metrics:
-    print(f"Bucket: {bucket['name']}")
-    print(f"  Size: {bucket['size_gb']:.2f} GB")
-    print(f"  Objects: {bucket['object_count']}")
-    print(f"  Storage Class: {bucket['storage_class']}")
-    print(f"  Monthly Cost: ${bucket['monthly_cost']:.2f}")
+success = agent.send_telemetry_data(data)
 ```
+
+**Parameters:**
+- `data` (dict): Telemetry data to send
+
+**Returns:** `bool` - Send success
 
 ---
 
-##### `get_cost_and_usage(start_date, end_date, granularity='DAILY')`
+##### `run_once()`
 
-Get AWS cost and usage data.
+Run one complete telemetry collection cycle.
 
 ```python
-import datetime
-
-start = datetime.date(2025, 9, 1)
-end = datetime.date(2025, 9, 30)
-
-costs = agent.get_cost_and_usage(
-    start_date=start,
-    end_date=end,
-    granularity='DAILY'  # or 'MONTHLY', 'HOURLY'
-)
-
-for day, cost_data in costs.items():
-    print(f"{day}: ${cost_data['total']:.2f}")
+# Collect and send data once
+if agent.run_once():
+    print("✓ Telemetry sent successfully")
 ```
+
+**Returns:** `bool` - Success status
 
 ---
 
-##### `start_collection(interval_seconds=300)`
+##### `run_continuous(interval_seconds=300)`
 
-Start continuous metric collection.
+Run continuous telemetry collection.
 
 ```python
-# Collect metrics every 5 minutes
-agent.start_collection(interval_seconds=300)
+# Collect and send every 5 minutes
+agent.run_continuous(interval_seconds=300)
 
-# Agent runs in background
-# Stop with agent.stop_collection()
+# This blocks and runs forever
+# Press Ctrl+C to stop
 ```
+
+**Parameters:**
+- `interval_seconds` (int): Collection interval in seconds (default: 300)
+
+---
+
+### What the AWS Agent Collects
+
+The agent automatically discovers and collects:
+
+**EC2 Instances:**
+- Instance ID, type, state
+- CPU utilization (from CloudWatch)
+- Memory usage (if CloudWatch agent installed)
+- Network I/O
+- **Hourly cost** (calculated from instance type)
+- Tags (for cost attribution)
+
+**EKS Clusters:**
+- Cluster name, status, version
+- Node groups and scaling config
+- Node instance types
+- **Cluster costs** (control plane + nodes)
+
+**Lambda Functions:**
+- Function name, runtime, memory
+- Invocation count
+- Average duration
+- **Calculated costs** (from invocations × duration × memory)
+
+**RDS Databases:**
+- Instance identifier, class, engine
+- CPU, memory, connections
+- **Hourly cost**
+
+**S3 Buckets:**
+- Bucket name, region
+- Storage size, object count
+- **Monthly storage cost**
 
 ---
 
 ## Azure Telemetry Agent
 
-Collect metrics from Azure services.
+Automatically collect metrics and costs from Azure.
 
 ### Class: `AzureTelemetryAgent`
 
@@ -163,66 +183,44 @@ Collect metrics from Azure services.
 from agents.azure_telemetry_agent import AzureTelemetryAgent
 
 agent = AzureTelemetryAgent(
-    subscription_id="YOUR_SUBSCRIPTION_ID",
-    client_id="YOUR_CLIENT_ID",
-    client_secret="YOUR_CLIENT_SECRET",
-    tenant_id="YOUR_TENANT_ID"
+    openfinops_endpoint="http://localhost:8080",
+    subscription_id="your-subscription-id",
+    resource_group="ml-resources"  # Optional
 )
 ```
 
+#### Constructor Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `openfinops_endpoint` | str | Yes | OpenFinOps server URL |
+| `subscription_id` | str | No | Azure subscription ID (or from AZURE_SUBSCRIPTION_ID env var) |
+| `resource_group` | str | No | Limit collection to specific resource group |
+
+**Authentication**: Uses Azure DefaultAzureCredential (environment variables, managed identity, Azure CLI, etc.)
+
 #### Methods
 
-##### `collect_vm_metrics(resource_group=None, vm_names=None)`
+Same pattern as AWS agent:
+- `register_agent()`
+- `collect_telemetry_data()`
+- `send_telemetry_data(data)`
+- `run_once()`
+- `run_continuous(interval_seconds=300)`
 
-Collect Virtual Machine metrics.
+### What the Azure Agent Collects
 
-```python
-metrics = agent.collect_vm_metrics(resource_group="ml-resources")
-
-for vm in metrics:
-    print(f"VM: {vm['name']}")
-    print(f"  CPU: {vm['cpu_utilization']:.1f}%")
-    print(f"  Memory: {vm['memory_utilization']:.1f}%")
-    print(f"  Disk IOPS: {vm['disk_iops']}")
-    print(f"  Cost (hourly): ${vm['cost_per_hour']:.4f}")
-```
-
----
-
-##### `collect_ml_workspace_metrics(workspace_name=None)`
-
-Collect Azure ML workspace metrics.
-
-```python
-metrics = agent.collect_ml_workspace_metrics(workspace_name="my-ml-workspace")
-
-for workspace in metrics:
-    print(f"Workspace: {workspace['name']}")
-    print(f"  Active Jobs: {workspace['active_jobs']}")
-    print(f"  Completed Jobs: {workspace['completed_jobs']}")
-    print(f"  Failed Jobs: {workspace['failed_jobs']}")
-    print(f"  Compute Hours: {workspace['compute_hours']}")
-    print(f"  Monthly Cost: ${workspace['monthly_cost']:.2f}")
-```
-
----
-
-##### `get_cost_management_data(start_date, end_date)`
-
-Get Azure cost management data.
-
-```python
-costs = agent.get_cost_management_data(start_date, end_date)
-
-for service, cost in costs['by_service'].items():
-    print(f"{service}: ${cost:.2f}")
-```
+- **Virtual Machines**: CPU, memory, disk, network, costs
+- **AKS Clusters**: Node pools, pod counts, costs
+- **Functions**: Invocations, duration, costs
+- **SQL Databases**: DTU usage, storage, costs
+- **Storage Accounts**: Blob storage size, costs
 
 ---
 
 ## GCP Telemetry Agent
 
-Collect metrics from Google Cloud Platform.
+Automatically collect metrics and costs from Google Cloud.
 
 ### Class: `GCPTelemetryAgent`
 
@@ -232,64 +230,44 @@ Collect metrics from Google Cloud Platform.
 from agents.gcp_telemetry_agent import GCPTelemetryAgent
 
 agent = GCPTelemetryAgent(
+    openfinops_endpoint="http://localhost:8080",
     project_id="your-project-id",
-    credentials_file="path/to/credentials.json"
+    region="us-central1"
 )
 ```
 
+#### Constructor Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `openfinops_endpoint` | str | Yes | OpenFinOps server URL |
+| `project_id` | str | No | GCP project ID (auto-detected if not provided) |
+| `region` | str | No | Default region (default: us-central1) |
+
+**Authentication**: Uses Google Application Default Credentials (service account key, gcloud CLI, etc.)
+
 #### Methods
 
-##### `collect_compute_metrics(instance_names=None, zone=None)`
+Same pattern as AWS and Azure agents:
+- `register_agent()`
+- `collect_telemetry_data()`
+- `send_telemetry_data(data)`
+- `run_once()`
+- `run_continuous(interval_seconds=300)`
 
-Collect Compute Engine metrics.
+### What the GCP Agent Collects
 
-```python
-metrics = agent.collect_compute_metrics(zone="us-central1-a")
-
-for instance in metrics:
-    print(f"Instance: {instance['name']}")
-    print(f"  CPU: {instance['cpu_utilization']:.1f}%")
-    print(f"  Memory: {instance['memory_utilization']:.1f}%")
-    print(f"  GPU: {instance['gpu_utilization']:.1f}%")
-    print(f"  Cost (hourly): ${instance['cost_per_hour']:.4f}")
-```
-
----
-
-##### `collect_vertex_ai_metrics(endpoint_id=None)`
-
-Collect Vertex AI endpoint metrics.
-
-```python
-metrics = agent.collect_vertex_ai_metrics()
-
-for endpoint in metrics:
-    print(f"Endpoint: {endpoint['name']}")
-    print(f"  Predictions: {endpoint['prediction_count']}")
-    print(f"  Latency (p50): {endpoint['latency_p50_ms']:.2f}ms")
-    print(f"  Latency (p95): {endpoint['latency_p95_ms']:.2f}ms")
-    print(f"  Error Rate: {endpoint['error_rate']:.2f}%")
-```
-
----
-
-##### `get_billing_data(start_date, end_date)`
-
-Get GCP billing data.
-
-```python
-billing = agent.get_billing_data(start_date, end_date)
-
-print(f"Total Cost: ${billing['total']:.2f}")
-for service, cost in billing['by_service'].items():
-    print(f"  {service}: ${cost:.2f}")
-```
+- **Compute Engine**: Instances, CPU, memory, GPU, costs
+- **GKE Clusters**: Node pools, workloads, costs
+- **Cloud Functions**: Invocations, duration, costs
+- **Cloud SQL**: CPU, storage, connections, costs
+- **Cloud Storage**: Bucket sizes, costs
 
 ---
 
 ## Generic Telemetry Agent
 
-Collect metrics from custom sources.
+For custom data sources and on-premises infrastructure.
 
 ### Class: `GenericTelemetryAgent`
 
@@ -299,167 +277,117 @@ Collect metrics from custom sources.
 from agents.generic_telemetry_agent import GenericTelemetryAgent
 
 agent = GenericTelemetryAgent(
-    endpoint="https://your-metrics-api.com",
-    api_key="your-api-key"
+    openfinops_endpoint="http://localhost:8080",
+    config_file="telemetry_config.yaml"  # Optional
 )
 ```
 
-#### Methods
+#### Custom Metric Collection
 
-##### `register_metric_collector(name, collector_func)`
-
-Register a custom metric collector function.
+The generic agent allows you to define custom metric collectors:
 
 ```python
-def collect_custom_metrics():
-    # Your custom logic
+# Define a custom collector function
+def collect_custom_gpu_metrics():
+    """Collect metrics from on-prem GPU cluster"""
+    import subprocess
+
+    # Example: Use nvidia-smi
+    result = subprocess.run(['nvidia-smi', '--query-gpu=utilization.gpu,memory.used',
+                            '--format=csv,noheader'], capture_output=True, text=True)
+
+    metrics = []
+    for line in result.stdout.strip().split('\n'):
+        gpu_util, mem_used = line.split(',')
+        metrics.append({
+            'gpu_utilization': float(gpu_util.strip().replace('%', '')),
+            'memory_used_mb': float(mem_used.strip().replace(' MiB', ''))
+        })
+
     return {
-        'metric1': 123.45,
-        'metric2': 678.90,
-        'timestamp': datetime.now()
+        'source': 'on-prem-gpu-cluster',
+        'timestamp': time.time(),
+        'gpu_metrics': metrics
     }
 
-agent.register_metric_collector('custom_source', collect_custom_metrics)
+# Register the collector
+agent.register_metric_collector('gpu_cluster', collect_custom_gpu_metrics)
+
+# Run continuous collection
+agent.run_continuous(interval_seconds=60)
 ```
 
 ---
 
-##### `collect_metrics(source_name=None)`
+## Deployment Guide
 
-Collect metrics from registered sources.
-
-```python
-# All sources
-metrics = agent.collect_metrics()
-
-# Specific source
-metrics = agent.collect_metrics(source_name='custom_source')
-```
-
----
-
-##### `push_metrics(metrics, destination='openfinops')`
-
-Push collected metrics to destination.
+### Option 1: Run as Python Script
 
 ```python
-metrics = {
-    'gpu_utilization': 85.5,
-    'training_loss': 0.245,
-    'cost_per_hour': 3.50
-}
-
-agent.push_metrics(metrics, destination='openfinops')
-```
-
----
-
-## Agent Configuration
-
-### Configuration File
-
-Create a configuration file for agents: `config/telemetry.yaml`
-
-```yaml
-# AWS Configuration
-aws:
-  enabled: true
-  access_key_id: ${AWS_ACCESS_KEY_ID}
-  secret_access_key: ${AWS_SECRET_ACCESS_KEY}
-  region: us-west-2
-  services:
-    - ec2
-    - sagemaker
-    - s3
-  collection_interval: 300  # seconds
-
-# Azure Configuration
-azure:
-  enabled: true
-  subscription_id: ${AZURE_SUBSCRIPTION_ID}
-  client_id: ${AZURE_CLIENT_ID}
-  client_secret: ${AZURE_CLIENT_SECRET}
-  tenant_id: ${AZURE_TENANT_ID}
-  services:
-    - virtual_machines
-    - ml_workspace
-  collection_interval: 300
-
-# GCP Configuration
-gcp:
-  enabled: true
-  project_id: ${GCP_PROJECT_ID}
-  credentials_file: /path/to/credentials.json
-  services:
-    - compute
-    - vertex_ai
-  collection_interval: 300
-
-# OpenFinOps Endpoint
-openfinops:
-  endpoint: http://localhost:8080/api/v1/metrics
-  api_key: ${OPENFINOPS_API_KEY}
-```
-
-### Load Configuration
-
-```python
-import yaml
+# deploy_aws_agent.py
 from agents.aws_telemetry_agent import AWSTelemetryAgent
 
-# Load config
-with open('config/telemetry.yaml', 'r') as f:
-    config = yaml.safe_load(f)
-
-# Initialize agent
 agent = AWSTelemetryAgent(
-    aws_access_key_id=config['aws']['access_key_id'],
-    aws_secret_access_key=config['aws']['secret_access_key'],
-    region=config['aws']['region']
+    openfinops_endpoint="http://your-server:8080",
+    aws_region="us-west-2"
 )
+
+if agent.register_agent():
+    print("Starting AWS telemetry collection...")
+    agent.run_continuous(interval_seconds=300)
+```
+
+Run:
+```bash
+python deploy_aws_agent.py
 ```
 
 ---
 
-## Deployment
+### Option 2: Docker Container
 
-### Docker Deployment
-
-Create `Dockerfile`:
-
+**Dockerfile:**
 ```dockerfile
 FROM python:3.10-slim
 
 WORKDIR /app
 
+# Install dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Copy agent code
 COPY agents/ ./agents/
-COPY config/ ./config/
 
-CMD ["python", "-m", "agents.aws_telemetry_agent"]
+# Agent will use AWS credentials from environment or IAM role
+CMD ["python", "-c", "from agents.aws_telemetry_agent import AWSTelemetryAgent; \
+     agent = AWSTelemetryAgent(openfinops_endpoint='http://openfinops-server:8080'); \
+     agent.register_agent(); \
+     agent.run_continuous(300)"]
 ```
 
-Build and run:
-
+**Build and run:**
 ```bash
 docker build -t openfinops-aws-agent .
+
 docker run -d --name aws-agent \
-  -e AWS_ACCESS_KEY_ID=xxx \
-  -e AWS_SECRET_ACCESS_KEY=yyy \
+  -e AWS_ACCESS_KEY_ID=your_key \
+  -e AWS_SECRET_ACCESS_KEY=your_secret \
+  -e AWS_DEFAULT_REGION=us-west-2 \
   openfinops-aws-agent
 ```
 
-### Kubernetes Deployment
+---
 
-Create `k8s/telemetry-agents.yaml`:
+### Option 3: Kubernetes Deployment
 
+**k8s/aws-agent-deployment.yaml:**
 ```yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: aws-telemetry-agent
+  name: openfinops-aws-agent
+  namespace: openfinops
 spec:
   replicas: 1
   selector:
@@ -474,140 +402,163 @@ spec:
       - name: agent
         image: openfinops/aws-agent:latest
         env:
-        - name: AWS_ACCESS_KEY_ID
-          valueFrom:
-            secretKeyRef:
-              name: aws-credentials
-              key: access-key-id
-        - name: AWS_SECRET_ACCESS_KEY
-          valueFrom:
-            secretKeyRef:
-              name: aws-credentials
-              key: secret-access-key
+        - name: OPENFINOPS_ENDPOINT
+          value: "http://openfinops-server:8080"
+        - name: AWS_REGION
+          value: "us-west-2"
         - name: COLLECTION_INTERVAL
           value: "300"
+        # Use IAM roles for service accounts (IRSA) for authentication
+        # Or provide credentials via secrets
+      serviceAccountName: aws-telemetry-agent
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: aws-telemetry-agent
+  namespace: openfinops
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::ACCOUNT:role/openfinops-agent-role
 ```
 
 Deploy:
-
 ```bash
-kubectl apply -f k8s/telemetry-agents.yaml
+kubectl apply -f k8s/aws-agent-deployment.yaml
 ```
 
-### Systemd Service
+---
 
-Create `/etc/systemd/system/openfinops-agent.service`:
+### Option 4: Systemd Service
 
+**/etc/systemd/system/openfinops-aws-agent.service:**
 ```ini
 [Unit]
-Description=OpenFinOps Telemetry Agent
+Description=OpenFinOps AWS Telemetry Agent
 After=network.target
 
 [Service]
 Type=simple
 User=openfinops
 WorkingDirectory=/opt/openfinops
-Environment="AWS_ACCESS_KEY_ID=xxx"
-Environment="AWS_SECRET_ACCESS_KEY=yyy"
-ExecStart=/usr/bin/python3 -m agents.aws_telemetry_agent
+Environment="OPENFINOPS_ENDPOINT=http://localhost:8080"
+Environment="AWS_REGION=us-west-2"
+Environment="AWS_SHARED_CREDENTIALS_FILE=/home/openfinops/.aws/credentials"
+ExecStart=/usr/bin/python3 -c "from agents.aws_telemetry_agent import AWSTelemetryAgent; agent = AWSTelemetryAgent(openfinops_endpoint='http://localhost:8080'); agent.register_agent(); agent.run_continuous(300)"
 Restart=always
+RestartSec=10
 
 [Install]
 WantedBy=multi-user.target
 ```
 
 Enable and start:
-
 ```bash
-sudo systemctl enable openfinops-agent
-sudo systemctl start openfinops-agent
-sudo systemctl status openfinops-agent
+sudo systemctl daemon-reload
+sudo systemctl enable openfinops-aws-agent
+sudo systemctl start openfinops-aws-agent
+sudo systemctl status openfinops-aws-agent
 ```
 
 ---
 
-## Complete Example
+## Multi-Cloud Example
 
-### Multi-Cloud Monitoring
+Deploy agents for all three cloud providers:
 
 ```python
+# deploy_all_agents.py
 from agents.aws_telemetry_agent import AWSTelemetryAgent
 from agents.azure_telemetry_agent import AzureTelemetryAgent
 from agents.gcp_telemetry_agent import GCPTelemetryAgent
-from openfinops.observability import CostObservatory
-import schedule
+import threading
 import time
 
-# Initialize agents
-aws_agent = AWSTelemetryAgent(
-    aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
-    aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY'),
-    region='us-west-2'
-)
+OPENFINOPS_SERVER = "http://your-server:8080"
 
-azure_agent = AzureTelemetryAgent(
-    subscription_id=os.getenv('AZURE_SUBSCRIPTION_ID'),
-    client_id=os.getenv('AZURE_CLIENT_ID'),
-    client_secret=os.getenv('AZURE_CLIENT_SECRET'),
-    tenant_id=os.getenv('AZURE_TENANT_ID')
-)
+def run_aws_agent():
+    agent = AWSTelemetryAgent(
+        openfinops_endpoint=OPENFINOPS_SERVER,
+        aws_region="us-west-2"
+    )
+    agent.register_agent()
+    agent.run_continuous(interval_seconds=300)
 
-gcp_agent = GCPTelemetryAgent(
-    project_id=os.getenv('GCP_PROJECT_ID'),
-    credentials_file='gcp-credentials.json'
-)
+def run_azure_agent():
+    agent = AzureTelemetryAgent(
+        openfinops_endpoint=OPENFINOPS_SERVER,
+        subscription_id="your-sub-id"
+    )
+    agent.register_agent()
+    agent.run_continuous(interval_seconds=300)
 
-# Initialize cost observatory
-cost_obs = CostObservatory()
+def run_gcp_agent():
+    agent = GCPTelemetryAgent(
+        openfinops_endpoint=OPENFINOPS_SERVER,
+        project_id="your-project"
+    )
+    agent.register_agent()
+    agent.run_continuous(interval_seconds=300)
 
-def collect_all_metrics():
-    """Collect metrics from all cloud providers"""
+if __name__ == "__main__":
+    # Run all agents in parallel
+    threads = [
+        threading.Thread(target=run_aws_agent, daemon=True),
+        threading.Thread(target=run_azure_agent, daemon=True),
+        threading.Thread(target=run_gcp_agent, daemon=True)
+    ]
 
-    # AWS
-    aws_ec2 = aws_agent.collect_ec2_metrics()
-    for instance in aws_ec2:
-        cost_obs.track_cloud_cost(
-            provider='aws',
-            service='ec2',
-            cost=instance['cost_per_hour'],
-            region='us-west-2',
-            instance_id=instance['instance_id']
-        )
+    for t in threads:
+        t.start()
 
-    # Azure
-    azure_vms = azure_agent.collect_vm_metrics()
-    for vm in azure_vms:
-        cost_obs.track_cloud_cost(
-            provider='azure',
-            service='vm',
-            cost=vm['cost_per_hour'],
-            vm_name=vm['name']
-        )
+    print("All telemetry agents started")
 
-    # GCP
-    gcp_compute = gcp_agent.collect_compute_metrics()
-    for instance in gcp_compute:
-        cost_obs.track_cloud_cost(
-            provider='gcp',
-            service='compute',
-            cost=instance['cost_per_hour'],
-            instance_name=instance['name']
-        )
-
-    print(f"✓ Collected metrics at {datetime.now()}")
-
-# Schedule collection every 5 minutes
-schedule.every(5).minutes.do(collect_all_metrics)
-
-print("Starting multi-cloud telemetry collection...")
-while True:
-    schedule.run_pending()
-    time.sleep(1)
+    # Keep main thread alive
+    try:
+        while True:
+            time.sleep(60)
+    except KeyboardInterrupt:
+        print("Shutting down agents...")
 ```
+
+---
+
+## Troubleshooting
+
+### Agent Can't Connect to OpenFinOps Server
+
+```bash
+# Check network connectivity
+curl http://your-server:8080/health
+
+# Verify endpoint in agent config
+```
+
+### AWS Authentication Issues
+
+```bash
+# Verify AWS credentials
+aws sts get-caller-identity
+
+# Check IAM permissions (needs CloudWatch, EC2, Cost Explorer read access)
+```
+
+### High CPU Usage from Agent
+
+```bash
+# Increase collection interval
+agent.run_continuous(interval_seconds=600)  # 10 minutes instead of 5
+```
+
+### Missing Metrics
+
+- Ensure the agent has proper IAM/RBAC permissions
+- Check CloudWatch agent is installed for detailed EC2 metrics
+- Verify resources are in the specified region
+
+---
 
 ## See Also
 
-- [Observability API](observability-api.md) - Data collection platform
-- [Deployment Guide](../TELEMETRY_AGENT_DEPLOYMENT.md) - Detailed deployment
-- [Configuration Guide](../guides/cloud-integration.md) - Cloud setup
-- [Troubleshooting](../guides/troubleshooting.md) - Common issues
+- [Observability API](observability-api.md) - Server-side API reference
+- [TELEMETRY_AGENT_DEPLOYMENT](../TELEMETRY_AGENT_DEPLOYMENT.md) - Detailed deployment guide
+- [Dashboard API](dashboard-api.md) - Viewing collected data

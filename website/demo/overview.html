@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Overview Dashboard - OpenFinOps Demo</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0a0f1e 0%, #1a1f2e 100%);
+            color: white;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .dashboard-header {
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .dashboard-header h1 {
+            font-size: 2.5rem;
+            margin: 0;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .back-button {
+            padding: 0.75rem 1.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(-5px);
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .metric-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .metric-card:hover {
+            border-color: var(--primary-color);
+            box-shadow: 0 8px 32px rgba(0, 212, 170, 0.2);
+        }
+
+        .metric-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .metric-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .metric-change {
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+
+        .metric-change.positive {
+            color: #10b981;
+        }
+
+        .metric-change.negative {
+            color: #ef4444;
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 2rem;
+        }
+
+        .chart-card h3 {
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            color: white;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+
+        .services-table {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            overflow-x: auto;
+        }
+
+        .services-table h3 {
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            color: white;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: rgba(0, 212, 170, 0.1);
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+        }
+
+        th {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        tbody tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .status-active {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+
+        .status-warning {
+            background: rgba(251, 191, 36, 0.2);
+            color: #fbbf24;
+        }
+
+        @media (max-width: 768px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .dashboard-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="dashboard-header">
+            <h1>
+                <i class="fas fa-chart-pie"></i> Overview Dashboard
+            </h1>
+            <a href="../demo-static.html" class="back-button">
+                <i class="fas fa-arrow-left"></i> Back to Demos
+            </a>
+        </div>
+
+        <!-- Metrics Cards -->
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-icon">
+                    <i class="fas fa-dollar-sign"></i>
+                </div>
+                <div class="metric-label">Total Monthly Cost</div>
+                <div class="metric-value">$127,543</div>
+                <div class="metric-change positive">
+                    <i class="fas fa-arrow-down"></i> 12% vs last month
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-icon">
+                    <i class="fab fa-aws"></i>
+                </div>
+                <div class="metric-label">AWS Spending</div>
+                <div class="metric-value">$48,231</div>
+                <div class="metric-change negative">
+                    <i class="fas fa-arrow-up"></i> 5% vs last month
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-icon">
+                    <i class="fab fa-microsoft"></i>
+                </div>
+                <div class="metric-label">Azure Spending</div>
+                <div class="metric-value">$32,456</div>
+                <div class="metric-change positive">
+                    <i class="fas fa-arrow-down"></i> 8% vs last month
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-icon">
+                    <i class="fas fa-database"></i>
+                </div>
+                <div class="metric-label">Data Platforms</div>
+                <div class="metric-value">$46,856</div>
+                <div class="metric-change negative">
+                    <i class="fas fa-arrow-up"></i> 18% vs last month
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="charts-grid">
+            <div class="chart-card">
+                <h3>Cost Breakdown by Service</h3>
+                <div class="chart-container">
+                    <canvas id="costBreakdownChart"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <h3>Cost Trend (Last 30 Days)</h3>
+                <div class="chart-container">
+                    <canvas id="costTrendChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="charts-grid">
+            <div class="chart-card">
+                <h3>Cloud Provider Comparison</h3>
+                <div class="chart-container">
+                    <canvas id="providerComparisonChart"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <h3>Daily Cost Distribution</h3>
+                <div class="chart-container">
+                    <canvas id="dailyCostChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Services Table -->
+        <div class="services-table">
+            <h3>Top Services by Cost</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Service</th>
+                        <th>Provider</th>
+                        <th>Monthly Cost</th>
+                        <th>Trend</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><i class="fas fa-server"></i> EC2 Instances</td>
+                        <td>AWS</td>
+                        <td>$28,450</td>
+                        <td><span class="metric-change negative"><i class="fas fa-arrow-up"></i> 8%</span></td>
+                        <td><span class="status-badge status-active">Active</span></td>
+                    </tr>
+                    <tr>
+                        <td><i class="fas fa-snowflake"></i> Snowflake Warehouse</td>
+                        <td>Snowflake</td>
+                        <td>$24,320</td>
+                        <td><span class="metric-change negative"><i class="fas fa-arrow-up"></i> 22%</span></td>
+                        <td><span class="status-badge status-warning">High Usage</span></td>
+                    </tr>
+                    <tr>
+                        <td><i class="fas fa-chart-line"></i> Databricks Clusters</td>
+                        <td>Databricks</td>
+                        <td>$22,536</td>
+                        <td><span class="metric-change positive"><i class="fas fa-arrow-down"></i> 5%</span></td>
+                        <td><span class="status-badge status-active">Active</span></td>
+                    </tr>
+                    <tr>
+                        <td><i class="fas fa-hdd"></i> S3 Storage</td>
+                        <td>AWS</td>
+                        <td>$12,780</td>
+                        <td><span class="metric-change positive"><i class="fas fa-arrow-down"></i> 3%</span></td>
+                        <td><span class="status-badge status-active">Active</span></td>
+                    </tr>
+                    <tr>
+                        <td><i class="fas fa-database"></i> Azure SQL Database</td>
+                        <td>Azure</td>
+                        <td>$18,230</td>
+                        <td><span class="metric-change negative"><i class="fas fa-arrow-up"></i> 12%</span></td>
+                        <td><span class="status-badge status-active">Active</span></td>
+                    </tr>
+                    <tr>
+                        <td><i class="fab fa-google"></i> GCP Compute Engine</td>
+                        <td>GCP</td>
+                        <td>$9,450</td>
+                        <td><span class="metric-change positive"><i class="fas fa-arrow-down"></i> 15%</span></td>
+                        <td><span class="status-badge status-active">Active</span></td>
+                    </tr>
+                    <tr>
+                        <td><i class="fas fa-leaf"></i> MongoDB Atlas</td>
+                        <td>MongoDB</td>
+                        <td>$6,890</td>
+                        <td><span class="metric-change positive"><i class="fas fa-arrow-down"></i> 7%</span></td>
+                        <td><span class="status-badge status-active">Active</span></td>
+                    </tr>
+                    <tr>
+                        <td><i class="fas fa-bolt"></i> Redis Cloud</td>
+                        <td>Redis</td>
+                        <td>$4,887</td>
+                        <td><span class="metric-change positive"><i class="fas fa-arrow-down"></i> 2%</span></td>
+                        <td><span class="status-badge status-active">Active</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Sample data generation
+        function generateCostTrendData() {
+            const days = [];
+            const costs = [];
+            const today = new Date();
+
+            for (let i = 29; i >= 0; i--) {
+                const date = new Date(today);
+                date.setDate(date.getDate() - i);
+                days.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+
+                // Generate realistic cost data with some variation
+                const baseCost = 4000 + Math.random() * 500;
+                costs.push(baseCost);
+            }
+
+            return { days, costs };
+        }
+
+        // Cost Breakdown Pie Chart
+        const ctxBreakdown = document.getElementById('costBreakdownChart').getContext('2d');
+        new Chart(ctxBreakdown, {
+            type: 'doughnut',
+            data: {
+                labels: ['AWS', 'Azure', 'GCP', 'Databricks', 'Snowflake', 'SaaS Services'],
+                datasets: [{
+                    data: [48231, 32456, 14567, 22536, 24320, 11777],
+                    backgroundColor: [
+                        'rgba(255, 159, 64, 0.8)',
+                        'rgba(54, 162, 235, 0.8)',
+                        'rgba(255, 99, 132, 0.8)',
+                        'rgba(255, 206, 86, 0.8)',
+                        'rgba(75, 192, 192, 0.8)',
+                        'rgba(153, 102, 255, 0.8)'
+                    ],
+                    borderColor: 'rgba(255, 255, 255, 0.2)',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: {
+                            color: 'white',
+                            padding: 15,
+                            font: {
+                                size: 12
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.label + ': $' + context.parsed.toLocaleString();
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Cost Trend Line Chart
+        const trendData = generateCostTrendData();
+        const ctxTrend = document.getElementById('costTrendChart').getContext('2d');
+        new Chart(ctxTrend, {
+            type: 'line',
+            data: {
+                labels: trendData.days,
+                datasets: [{
+                    label: 'Daily Cost',
+                    data: trendData.costs,
+                    borderColor: 'rgba(0, 212, 170, 1)',
+                    backgroundColor: 'rgba(0, 212, 170, 0.1)',
+                    fill: true,
+                    tension: 0.4,
+                    borderWidth: 2,
+                    pointRadius: 0,
+                    pointHoverRadius: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    intersect: false,
+                    mode: 'index'
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return 'Cost: $' + context.parsed.y.toFixed(2);
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        ticks: {
+                            color: 'rgba(255, 255, 255, 0.7)',
+                            callback: function(value) {
+                                return '$' + value.toLocaleString();
+                            }
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: 'rgba(255, 255, 255, 0.7)',
+                            maxRotation: 45,
+                            minRotation: 45
+                        },
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+
+        // Provider Comparison Bar Chart
+        const ctxProvider = document.getElementById('providerComparisonChart').getContext('2d');
+        new Chart(ctxProvider, {
+            type: 'bar',
+            data: {
+                labels: ['AWS', 'Azure', 'GCP', 'Databricks', 'Snowflake'],
+                datasets: [
+                    {
+                        label: 'Compute',
+                        data: [28450, 18230, 9450, 15320, 0],
+                        backgroundColor: 'rgba(255, 159, 64, 0.8)'
+                    },
+                    {
+                        label: 'Storage',
+                        data: [12780, 8450, 3120, 4200, 5430],
+                        backgroundColor: 'rgba(54, 162, 235, 0.8)'
+                    },
+                    {
+                        label: 'Database',
+                        data: [7001, 5776, 1997, 3016, 18890],
+                        backgroundColor: 'rgba(75, 192, 192, 0.8)'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: 'white',
+                            font: {
+                                size: 12
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': $' + context.parsed.y.toLocaleString();
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        stacked: true,
+                        ticks: {
+                            color: 'rgba(255, 255, 255, 0.7)',
+                            callback: function(value) {
+                                return '$' + (value / 1000) + 'k';
+                            }
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        }
+                    },
+                    x: {
+                        stacked: true,
+                        ticks: {
+                            color: 'rgba(255, 255, 255, 0.7)'
+                        },
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+
+        // Daily Cost Distribution
+        const ctxDaily = document.getElementById('dailyCostChart').getContext('2d');
+        new Chart(ctxDaily, {
+            type: 'bar',
+            data: {
+                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                datasets: [{
+                    label: 'Average Daily Cost',
+                    data: [4250, 4380, 4190, 4420, 4510, 3890, 3650],
+                    backgroundColor: 'rgba(0, 212, 170, 0.8)',
+                    borderColor: 'rgba(0, 212, 170, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return 'Avg Cost: $' + context.parsed.y.toLocaleString();
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            color: 'rgba(255, 255, 255, 0.7)',
+                            callback: function(value) {
+                                return '$' + (value / 1000) + 'k';
+                            }
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: 'rgba(255, 255, 255, 0.7)'
+                        },
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

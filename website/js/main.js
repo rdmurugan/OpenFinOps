@@ -86,3 +86,27 @@ document.addEventListener('DOMContentLoaded', () => {
         block.innerHTML = numberedLines;
     });
 });
+
+// Copy code to clipboard
+function copyCode(button) {
+    const codeBlock = button.closest('.code-block');
+    const code = codeBlock.querySelector('code');
+    
+    // Get text content without HTML tags
+    const text = code.textContent || code.innerText;
+    
+    navigator.clipboard.writeText(text).then(() => {
+        const originalHTML = button.innerHTML;
+        button.innerHTML = '<i class="fas fa-check"></i> Copied!';
+        button.style.background = 'var(--primary-color)';
+        button.style.color = 'white';
+        
+        setTimeout(() => {
+            button.innerHTML = originalHTML;
+            button.style.background = '';
+            button.style.color = '';
+        }, 2000);
+    }).catch(err => {
+        console.error('Failed to copy:', err);
+    });
+}

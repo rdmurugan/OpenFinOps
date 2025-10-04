@@ -7,15 +7,28 @@ Complete API reference for the OpenFinOps Observability Platform.
 - [ObservabilityHub](#observabilityhub)
 - [LLMObservabilityHub](#llmobservabilityhub)
 - [CostObservatory](#costobservatory)
-- [FinOpsDashboards](#finopsdashboards)
-- [AIRecommendations](#airecommendations)
-- [AlertingEngine](#alertingengine)
+- [Architecture Overview](#architecture-overview)
+
+---
+
+## Architecture Overview
+
+**IMPORTANT**: OpenFinOps uses an **agent-based architecture** for cost tracking:
+
+1. **Telemetry Agents** (separate processes) run on your infrastructure or cloud accounts
+2. Agents **automatically** query cloud provider APIs (AWS CloudWatch, Azure Monitor, GCP Billing)
+3. Agents **automatically calculate costs** based on instance types and usage
+4. Agents send telemetry data to the OpenFinOps server via REST API
+5. **ObservabilityHub** receives and processes telemetry data
+6. **Dashboards** display real-time metrics and costs
+
+**You do NOT manually track costs** - the agents do this automatically.
 
 ---
 
 ## ObservabilityHub
 
-The central orchestration hub for all monitoring activities.
+The central hub for receiving and processing telemetry data.
 
 ### Class: `ObservabilityHub`
 
@@ -24,39 +37,97 @@ The central orchestration hub for all monitoring activities.
 ```python
 from openfinops.observability import ObservabilityHub
 
-hub = ObservabilityHub(config_path=None)
+hub = ObservabilityHub()
 ```
-
-#### Constructor Parameters
-
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
-| `config_path` | str | None | Path to configuration file (YAML) |
 
 #### Methods
 
-##### `register_cluster(cluster_name, nodes)`
+##### `register_cluster(cluster_id, nodes, region="us-east-1")`
 
 Register a compute cluster for monitoring.
 
 ```python
 hub.register_cluster(
-    cluster_name="gpu-cluster-1",
-    nodes=["node-1", "node-2", "node-3"]
+    cluster_id="gpu-cluster-1",
+    nodes=["node-1", "node-2", "node-3"],
+    region="us-west-2"
 )
 ```
 
 **Parameters:**
-- `cluster_name` (str): Unique identifier for the cluster
+- `cluster_id` (str): Unique cluster identifier
 - `nodes` (list[str]): List of node hostnames or IPs
+- `region` (str): Cloud region (default: "us-east-1")
 
 **Returns:** `dict` - Registration confirmation
 
-**Example:**
+---
+
+##### `register_service(service_name, cluster_id, dependencies=None)`
+
+Register a service for monitoring.
+
 ```python
-result = hub.register_cluster("training-cluster", ["gpu-1", "gpu-2"])
-print(result['status'])  # 'registered'
+hub.register_service(
+    service_name="training-api",
+    cluster_id="gpu-cluster-1",
+    dependencies=["database", "cache"]
+)
 ```
+
+**Parameters:**
+- `service_name` (str): Service identifier
+- `cluster_id` (str): Associated cluster ID
+- `dependencies` (list[str], optional): List of service dependencies
+
+---
+
+##### `collect_system_metrics(metrics)`
+
+Collect system-level metrics (typically called by telemetry agents).
+
+```python
+from openfinops.observability.observability_hub import SystemMetrics
+
+metrics = SystemMetrics(
+    timestamp=time.time(),
+    cpu_usage=75.5,
+    memory_usage=68.2,
+    disk_usage=45.0,
+    gpu_usage=92.3,
+    cluster_id="gpu-cluster-1",
+    node_id="node-1"
+)
+
+hub.collect_system_metrics(metrics)
+```
+
+**Parameters:**
+- `metrics` (SystemMetrics): System metrics dataclass
+
+---
+
+##### `collect_service_metrics(metrics)`
+
+Collect service-level metrics.
+
+```python
+from openfinops.observability.observability_hub import ServiceMetrics
+
+metrics = ServiceMetrics(
+    service_name="training-api",
+    timestamp=time.time(),
+    request_count=1000,
+    success_rate=99.5,
+    avg_response_time=45.2,
+    status="running"
+)
+
+hub.collect_service_metrics(metrics)
+```
+
+**Parameters:**
+- `metrics` (ServiceMetrics): Service metrics dataclass
 
 ---
 
@@ -66,590 +137,347 @@ Get health summary for all registered clusters.
 
 ```python
 summary = hub.get_cluster_health_summary()
+
+for cluster_id, health in summary.items():
+    print(f"{cluster_id}:")
+    print(f"  Status: {health['health_status']}")
+    print(f"  Total Nodes: {health['total_nodes']}")
+    print(f"  Healthy Nodes: {health['healthy_nodes']}")
+    print(f"  Avg CPU: {health['avg_cpu_usage']:.1f}%")
+    print(f"  Avg GPU: {health['avg_gpu_usage']:.1f}%")
 ```
 
-**Returns:** `dict` - Health metrics for each cluster
-
-**Example:**
-```python
-summary = hub.get_cluster_health_summary()
-for cluster_name, metrics in summary.items():
-    print(f"{cluster_name}: {metrics['status']}")
-    print(f"  Nodes: {metrics['total_nodes']}")
-    print(f"  Healthy: {metrics['healthy_nodes']}")
-    print(f"  CPU Avg: {metrics['avg_cpu_usage']}%")
-    print(f"  GPU Avg: {metrics['avg_gpu_usage']}%")
-```
-
----
-
-##### `update_node_metrics(node_id, metrics)`
-
-Update metrics for a specific node.
-
-```python
-hub.update_node_metrics(
-    node_id="gpu-node-1",
-    metrics={
-        "cpu_usage": 75.5,
-        "gpu_usage": 92.3,
-        "memory_usage": 68.2,
-        "disk_usage": 45.0,
-        "network_io": 1024000
-    }
-)
-```
-
-**Parameters:**
-- `node_id` (str): Node identifier
-- `metrics` (dict): Dictionary of metric values
-
-**Returns:** `bool` - Success status
-
----
-
-##### `track_cost(provider, service, cost, metadata=None)`
-
-Track costs for cloud services.
-
-```python
-hub.track_cost(
-    provider="aws",
-    service="ec2",
-    cost=125.50,
-    metadata={
-        "region": "us-west-2",
-        "instance_type": "p3.2xlarge",
-        "tags": {"team": "ml-research"}
-    }
-)
-```
-
-**Parameters:**
-- `provider` (str): Cloud provider name (aws, azure, gcp, etc.)
-- `service` (str): Service name
-- `cost` (float): Cost amount in USD
-- `metadata` (dict, optional): Additional metadata
+**Returns:** `dict` - Cluster health metrics
 
 ---
 
 ## LLMObservabilityHub
 
-Specialized monitoring for LLM training and inference workloads.
+Specialized monitoring for LLM training and RAG pipelines.
 
 ### Class: `LLMObservabilityHub`
 
 **Location**: `openfinops.observability.llm_observability`
 
 ```python
-from openfinops.observability import LLMObservabilityHub
+from openfinops.observability.llm_observability import LLMObservabilityHub
 
-llm_hub = LLMObservabilityHub(config_path=None)
+llm_hub = LLMObservabilityHub()
 ```
 
 #### Methods
 
-##### `register_training_cluster(cluster_name, nodes, config=None)`
+##### `collect_llm_training_metrics(metrics)`
 
-Register a training cluster with LLM-specific configuration.
-
-```python
-llm_hub.register_training_cluster(
-    cluster_name="llm-training-cluster",
-    nodes=["gpu-node-1", "gpu-node-2"],
-    config={
-        "gpu_type": "A100",
-        "gpu_count": 8,
-        "interconnect": "nvlink"
-    }
-)
-```
-
-**Parameters:**
-- `cluster_name` (str): Cluster identifier
-- `nodes` (list[str]): List of compute nodes
-- `config` (dict, optional): Cluster configuration
-
----
-
-##### `track_training_metrics(model_id, epoch, step, loss, **kwargs)`
-
-Track training metrics for an LLM model.
+Collect LLM training metrics.
 
 ```python
-llm_hub.track_training_metrics(
-    model_id="gpt-custom-7b",
+from openfinops.observability.llm_observability import LLMTrainingMetrics
+
+metrics = LLMTrainingMetrics(
+    run_id="llm-training-001",
+    model_name="gpt-custom-7b",
     epoch=5,
     step=1000,
-    loss=0.245,
+    training_loss=0.245,
+    validation_loss=0.289,
     learning_rate=0.0001,
-    gpu_memory_usage=42000,  # MB
+    gpu_memory_mb=42000,
     batch_size=32,
-    gradient_norm=1.2,
-    perplexity=12.5
+    throughput_samples_per_sec=128.5,
+    timestamp=time.time()
 )
+
+llm_hub.collect_llm_training_metrics(metrics)
 ```
 
 **Parameters:**
-- `model_id` (str): Unique model identifier
-- `epoch` (int): Current training epoch
-- `step` (int): Current training step
-- `loss` (float): Training loss value
-- `**kwargs`: Additional metrics (gpu_memory_usage, learning_rate, etc.)
-
-**Returns:** `dict` - Tracking confirmation
+- `metrics` (LLMTrainingMetrics): Training metrics dataclass
 
 ---
 
-##### `track_rag_metrics(system_id, query, retrieval_time, generation_time, **kwargs)`
+##### `collect_rag_pipeline_metrics(metrics)`
 
-Track RAG pipeline metrics.
+Collect RAG pipeline metrics.
 
 ```python
-llm_hub.track_rag_metrics(
-    system_id="production-rag",
-    query="What is the capital of France?",
-    retrieval_time=45.2,  # milliseconds
-    generation_time=120.5,  # milliseconds
+from openfinops.observability.llm_observability import RAGPipelineMetrics
+
+metrics = RAGPipelineMetrics(
+    pipeline_id="production-rag",
+    query="What is machine learning?",
+    retrieval_time_ms=45.2,
+    generation_time_ms=120.5,
+    total_time_ms=165.7,
     relevance_score=0.95,
     num_retrieved_docs=5,
-    total_tokens=150,
-    cost=0.0025
+    embedding_tokens=50,
+    generation_tokens=150,
+    timestamp=time.time()
 )
+
+llm_hub.collect_rag_pipeline_metrics(metrics)
 ```
 
 **Parameters:**
-- `system_id` (str): RAG system identifier
-- `query` (str): User query
-- `retrieval_time` (float): Time for document retrieval (ms)
-- `generation_time` (float): Time for response generation (ms)
-- `**kwargs`: Additional metrics
+- `metrics` (RAGPipelineMetrics): RAG metrics dataclass
 
 ---
 
-##### `track_inference_metrics(model_id, endpoint, latency, tokens, cost)`
+##### `get_training_summary(run_id)`
 
-Track inference endpoint metrics.
+Get training summary for a specific run.
 
 ```python
-llm_hub.track_inference_metrics(
-    model_id="gpt-4",
-    endpoint="production-api",
-    latency=250.5,  # milliseconds
-    tokens={"input": 100, "output": 250},
-    cost=0.015
-)
+summary = llm_hub.get_training_summary("llm-training-001")
+
+print(f"Model: {summary['model_name']}")
+print(f"Total Steps: {summary['total_steps']}")
+print(f"Current Loss: {summary['current_loss']:.4f}")
+print(f"Best Loss: {summary['best_loss']:.4f}")
+print(f"GPU Utilization: {summary['avg_gpu_usage']:.1f}%")
 ```
 
 **Parameters:**
-- `model_id` (str): Model identifier
-- `endpoint` (str): Endpoint name
-- `latency` (float): Response latency in ms
-- `tokens` (dict): Token counts
-- `cost` (float): Request cost in USD
+- `run_id` (str): Training run identifier
+
+**Returns:** `dict` - Training summary
 
 ---
 
-##### `get_training_summary(model_id, time_range=None)`
+##### `get_rag_pipeline_summary(pipeline_id)`
 
-Get training summary for a model.
+Get RAG pipeline performance summary.
 
 ```python
-summary = llm_hub.get_training_summary(
-    model_id="gpt-custom-7b",
-    time_range="24h"  # or "7d", "30d"
-)
+summary = llm_hub.get_rag_pipeline_summary("production-rag")
 
-print(f"Total steps: {summary['total_steps']}")
-print(f"Current loss: {summary['current_loss']}")
-print(f"Best loss: {summary['best_loss']}")
-print(f"Average GPU usage: {summary['avg_gpu_usage']}%")
-print(f"Total cost: ${summary['total_cost']:.2f}")
+print(f"Total Queries: {summary['total_queries']}")
+print(f"Avg Retrieval Time: {summary['avg_retrieval_time_ms']:.2f}ms")
+print(f"Avg Relevance: {summary['avg_relevance_score']:.2f}")
 ```
+
+**Parameters:**
+- `pipeline_id` (str): RAG pipeline identifier
+
+**Returns:** `dict` - Pipeline summary
 
 ---
 
 ## CostObservatory
 
-Centralized cost tracking and analysis.
+Centralized cost tracking and budget management. Receives cost data from telemetry agents.
 
 ### Class: `CostObservatory`
 
 **Location**: `openfinops.observability.cost_observatory`
 
 ```python
-from openfinops.observability import CostObservatory
+from openfinops.observability.cost_observatory import CostObservatory
 
 cost_obs = CostObservatory()
 ```
 
 #### Methods
 
-##### `track_cloud_cost(provider, service, cost, region=None, **metadata)`
+##### `add_cost_entry(cost_entry)`
 
-Track cloud service costs.
+Add a cost entry (typically called by telemetry agents, not directly by users).
 
 ```python
-cost_obs.track_cloud_cost(
+from openfinops.observability.cost_observatory import CostEntry
+
+entry = CostEntry(
+    timestamp=time.time(),
     provider="aws",
-    service="sagemaker",
-    cost=1250.75,
-    region="us-east-1",
-    instance_type="ml.p3.8xlarge",
-    team="ml-research",
-    project="llm-training"
+    service="ec2",
+    resource_id="i-1234567890abcdef0",
+    cost_usd=3.50,  # hourly cost
+    region="us-west-2",
+    tags={"team": "ml-research", "project": "llm-training"}
 )
+
+cost_obs.add_cost_entry(entry)
 ```
 
 **Parameters:**
-- `provider` (str): Cloud provider (aws, azure, gcp)
-- `service` (str): Service name
-- `cost` (float): Cost in USD
-- `region` (str, optional): Cloud region
-- `**metadata`: Additional metadata for attribution
+- `cost_entry` (CostEntry): Cost entry dataclass
 
 ---
 
-##### `track_api_cost(platform, model, tokens_input, tokens_output, cost)`
+##### `create_budget(budget)`
 
-Track AI API costs (OpenAI, Anthropic, etc.).
+Create a cost budget with alerts.
 
 ```python
-cost_obs.track_api_cost(
-    platform="openai",
-    model="gpt-4",
-    tokens_input=500,
-    tokens_output=1200,
-    cost=0.048
+from openfinops.observability.cost_observatory import Budget
+
+budget = Budget(
+    budget_id="monthly-ai-budget",
+    name="AI/ML Monthly Budget",
+    amount_usd=50000.0,
+    period="monthly",
+    scope={
+        "provider": "aws",
+        "tags": {"team": "ml-research"}
+    },
+    alert_threshold=0.8  # Alert at 80%
 )
+
+cost_obs.create_budget(budget)
 ```
 
 **Parameters:**
-- `platform` (str): API platform (openai, anthropic, etc.)
-- `model` (str): Model name
-- `tokens_input` (int): Input tokens
-- `tokens_output` (int): Output tokens
-- `cost` (float): Request cost in USD
+- `budget` (Budget): Budget configuration dataclass
 
 ---
 
-##### `get_total_cost(time_range=None, filters=None)`
+##### `get_cost_summary(time_range_hours=24)`
 
-Get total costs with optional filtering.
+Get cost summary for a time period.
 
 ```python
-# Total cost for last 30 days
-total = cost_obs.get_total_cost(time_range="30d")
-print(f"Total: ${total:.2f}")
+# Last 24 hours
+summary = cost_obs.get_cost_summary(time_range_hours=24)
 
-# Filtered by provider
-aws_total = cost_obs.get_total_cost(
-    time_range="30d",
-    filters={"provider": "aws"}
-)
-print(f"AWS Total: ${aws_total:.2f}")
+print(f"Total Cost: ${summary['total_cost']:.2f}")
+print(f"By Provider:")
+for provider, cost in summary['by_provider'].items():
+    print(f"  {provider}: ${cost:.2f}")
+
+print(f"By Service:")
+for service, cost in summary['by_service'].items():
+    print(f"  {service}: ${cost:.2f}")
+
+print(f"Top Resources:")
+for resource in summary['top_resources'][:5]:
+    print(f"  {resource['resource_id']}: ${resource['cost']:.2f}")
 ```
 
 **Parameters:**
-- `time_range` (str, optional): Time range (24h, 7d, 30d, 90d)
-- `filters` (dict, optional): Filter criteria
+- `time_range_hours` (int): Time range in hours (default: 24)
 
-**Returns:** `float` - Total cost in USD
+**Returns:** `dict` - Cost summary with breakdowns
 
 ---
 
-##### `get_cost_breakdown_by_provider(time_range=None)`
+##### `get_budget_status()`
 
-Get cost breakdown by cloud provider.
+Get status of all budgets.
 
 ```python
-breakdown = cost_obs.get_cost_breakdown_by_provider(time_range="30d")
+status = cost_obs.get_budget_status()
 
-for provider, cost in breakdown.items():
-    print(f"{provider}: ${cost:.2f}")
+for budget_id, info in status.items():
+    print(f"{info['name']}:")
+    print(f"  Budget: ${info['amount']:.2f}")
+    print(f"  Spent: ${info['spent']:.2f}")
+    print(f"  Remaining: ${info['remaining']:.2f}")
+    print(f"  Percentage: {info['percentage_used']:.1f}%")
+    print(f"  Status: {info['status']}")  # ok, warning, exceeded
 ```
 
-**Returns:** `dict` - Provider to cost mapping
+**Returns:** `dict` - Budget status for all budgets
 
 ---
 
-##### `get_cost_breakdown_by_service(time_range=None)`
+## Complete Example: Using Telemetry Agents
 
-Get cost breakdown by service.
+Here's how OpenFinOps actually works in practice:
 
-```python
-services = cost_obs.get_cost_breakdown_by_service(time_range="7d")
-
-for service, data in services.items():
-    print(f"{service}:")
-    print(f"  Cost: ${data['cost']:.2f}")
-    print(f"  Percentage: {data['percentage']:.1f}%")
-```
-
----
-
-##### `get_cost_trend(time_range, granularity="daily")`
-
-Get cost trend over time.
+### Step 1: Deploy Telemetry Agent
 
 ```python
-trend = cost_obs.get_cost_trend(
-    time_range="30d",
-    granularity="daily"  # or "hourly", "weekly"
+# agents/deploy_aws_agent.py
+from agents.aws_telemetry_agent import AWSTelemetryAgent
+import time
+
+# Initialize agent pointing to your OpenFinOps server
+agent = AWSTelemetryAgent(
+    openfinops_endpoint="http://localhost:8080",
+    aws_region="us-west-2"
 )
 
-for date, cost in trend.items():
-    print(f"{date}: ${cost:.2f}")
+# Register with server
+if agent.register_agent():
+    print("✓ Agent registered")
+
+    # Run continuous collection (every 5 minutes)
+    agent.run_continuous(interval_seconds=300)
+else:
+    print("✗ Agent registration failed")
 ```
 
-**Parameters:**
-- `time_range` (str): Time range
-- `granularity` (str): Data granularity
+The agent will automatically:
+1. Discover EC2 instances, EKS clusters, Lambda functions, etc.
+2. Query CloudWatch for CPU, memory, network metrics
+3. Calculate costs based on instance types and usage
+4. Send telemetry to `http://localhost:8080/api/v1/telemetry/ingest`
 
-**Returns:** `dict` - Date to cost mapping
-
----
-
-## FinOpsDashboards
-
-Financial operations dashboards and reporting.
-
-### Class: `LLMFinOpsDashboardCreator`
-
-**Location**: `openfinops.observability.finops_dashboards`
+### Step 2: Access Data via ObservabilityHub
 
 ```python
-from openfinops.observability import LLMFinOpsDashboardCreator
-
-finops = LLMFinOpsDashboardCreator()
-```
-
-#### Methods
-
-##### `create_cost_dashboard(time_range="30d")`
-
-Create comprehensive cost dashboard.
-
-```python
-dashboard = finops.create_cost_dashboard(time_range="30d")
-
-# Dashboard contains:
-# - Total costs
-# - Cost by provider
-# - Cost by service
-# - Cost trends
-# - Top cost drivers
-# - Optimization opportunities
-```
-
-**Returns:** `dict` - Dashboard data structure
-
----
-
-##### `generate_cost_report(time_range, format="pdf")`
-
-Generate cost report.
-
-```python
-report = finops.generate_cost_report(
-    time_range="30d",
-    format="pdf"  # or "csv", "json"
-)
-
-# Save report
-with open("cost_report.pdf", "wb") as f:
-    f.write(report)
-```
-
-**Parameters:**
-- `time_range` (str): Reporting period
-- `format` (str): Output format
-
-**Returns:** `bytes` - Report data
-
----
-
-##### `get_budget_status(budget_id)`
-
-Check budget status.
-
-```python
-status = finops.get_budget_status("monthly-ai-budget")
-
-print(f"Budget: ${status['budget_amount']:.2f}")
-print(f"Spent: ${status['spent_amount']:.2f}")
-print(f"Remaining: ${status['remaining']:.2f}")
-print(f"Percentage: {status['percentage_used']:.1f}%")
-print(f"Status: {status['status']}")  # ok, warning, exceeded
-```
-
----
-
-## AIRecommendations
-
-AI-powered cost optimization recommendations.
-
-### Class: `AIRecommendationEngine`
-
-**Location**: `openfinops.observability.ai_recommendations`
-
-```python
-from openfinops.observability import AIRecommendationEngine
-
-ai_rec = AIRecommendationEngine()
-```
-
-#### Methods
-
-##### `get_optimization_recommendations(scope="all")`
-
-Get AI-generated optimization recommendations.
-
-```python
-recommendations = ai_rec.get_optimization_recommendations(scope="all")
-
-for rec in recommendations:
-    print(f"Title: {rec['title']}")
-    print(f"Potential Savings: ${rec['estimated_savings']:.2f}/month")
-    print(f"Confidence: {rec['confidence']}%")
-    print(f"Priority: {rec['priority']}")  # high, medium, low
-    print(f"Action: {rec['recommended_action']}")
-    print()
-```
-
-**Parameters:**
-- `scope` (str): Recommendation scope (all, compute, storage, api)
-
-**Returns:** `list[dict]` - List of recommendations
-
----
-
-##### `detect_anomalies(resource_type=None, threshold=2.0)`
-
-Detect cost anomalies using ML.
-
-```python
-anomalies = ai_rec.detect_anomalies(
-    resource_type="gpu",
-    threshold=2.0  # Standard deviations
-)
-
-for anomaly in anomalies:
-    print(f"Resource: {anomaly['resource_id']}")
-    print(f"Anomaly Score: {anomaly['score']}")
-    print(f"Expected Cost: ${anomaly['expected_cost']:.2f}")
-    print(f"Actual Cost: ${anomaly['actual_cost']:.2f}")
-    print(f"Deviation: {anomaly['deviation']}%")
-```
-
----
-
-## AlertingEngine
-
-Intelligent alerting and notification system.
-
-### Class: `AlertingEngine`
-
-**Location**: `openfinops.observability.alerting_engine`
-
-```python
-from openfinops.observability import AlertingEngine
-
-alerting = AlertingEngine()
-```
-
-#### Methods
-
-##### `create_alert_rule(name, condition, severity, channels)`
-
-Create a new alert rule.
-
-```python
-alerting.create_alert_rule(
-    name="high_gpu_cost",
-    condition="gpu_cost_hourly > 500",
-    severity="critical",  # critical, warning, info
-    channels=["email", "slack"]
-)
-```
-
-**Parameters:**
-- `name` (str): Rule identifier
-- `condition` (str): Alert condition (expression)
-- `severity` (str): Alert severity level
-- `channels` (list[str]): Notification channels
-
----
-
-##### `get_active_alerts(severity=None)`
-
-Get currently active alerts.
-
-```python
-alerts = alerting.get_active_alerts(severity="critical")
-
-for alert in alerts:
-    print(f"Alert: {alert['name']}")
-    print(f"Severity: {alert['severity']}")
-    print(f"Message: {alert['message']}")
-    print(f"Triggered: {alert['triggered_at']}")
-```
-
----
-
-## Complete Example
-
-Here's a complete example using multiple APIs together:
-
-```python
-from openfinops import ObservabilityHub, LLMObservabilityHub
-from openfinops.observability import CostObservatory, AIRecommendationEngine
+# In your application
+from openfinops.observability import ObservabilityHub
+from openfinops.observability.cost_observatory import CostObservatory
 
 # Initialize components
 hub = ObservabilityHub()
-llm_hub = LLMObservabilityHub()
 cost_obs = CostObservatory()
-ai_rec = AIRecommendationEngine()
 
-# Register cluster
-llm_hub.register_training_cluster(
-    cluster_name="production-cluster",
-    nodes=["gpu-1", "gpu-2", "gpu-3", "gpu-4"]
-)
+# Get cluster health (populated by agents)
+health = hub.get_cluster_health_summary()
+for cluster_id, metrics in health.items():
+    print(f"{cluster_id}: {metrics['health_status']}")
 
-# Track training metrics
-for step in range(1, 1001):
-    llm_hub.track_training_metrics(
-        model_id="llm-v2",
-        epoch=1,
-        step=step,
-        loss=1.0 / step,
-        gpu_memory_usage=40000,
-        batch_size=32
-    )
-
-# Track costs
-cost_obs.track_cloud_cost(
-    provider="aws",
-    service="ec2",
-    cost=450.00,
-    instance_type="p3.8xlarge"
-)
-
-# Get recommendations
-recommendations = ai_rec.get_optimization_recommendations()
-for rec in recommendations[:3]:  # Top 3
-    print(f"💡 {rec['title']}")
-    print(f"   Save ${rec['estimated_savings']:.2f}/month")
-
-# Get cost summary
-total_cost = cost_obs.get_total_cost(time_range="30d")
-print(f"\n💰 Total cost (30 days): ${total_cost:.2f}")
+# Get cost summary (populated by agents)
+costs = cost_obs.get_cost_summary(time_range_hours=24)
+print(f"Total 24h cost: ${costs['total_cost']:.2f}")
 ```
+
+### Step 3: View Dashboards
+
+```bash
+# Start the web server
+openfinops-dashboard --port 8080
+
+# Access dashboards at:
+# http://localhost:8080/dashboard/cfo
+# http://localhost:8080/dashboard/coo
+# http://localhost:8080/dashboard/infrastructure
+```
+
+---
+
+## Manual Metric Injection (Advanced)
+
+If you need to inject custom metrics not from cloud providers:
+
+```python
+from openfinops.observability import ObservabilityHub
+from openfinops.observability.observability_hub import SystemMetrics
+import time
+
+hub = ObservabilityHub()
+
+# Inject custom system metrics
+metrics = SystemMetrics(
+    timestamp=time.time(),
+    cpu_usage=75.5,
+    memory_usage=68.2,
+    disk_usage=45.0,
+    gpu_usage=92.3,
+    cluster_id="on-prem-cluster",
+    node_id="server-001"
+)
+
+hub.collect_system_metrics(metrics)
+```
+
+---
 
 ## See Also
 
-- [VizlyChart API](vizlychart-api.md) - Visualization library
+- [Telemetry Agents API](telemetry-agents.md) - Agent deployment guide
 - [Dashboard API](dashboard-api.md) - Dashboard components
-- [Telemetry Agents](telemetry-agents.md) - Cloud agents
-- [Tutorials](../tutorials/basic-usage.md) - Step-by-step guides
+- [TELEMETRY_AGENT_DEPLOYMENT](../TELEMETRY_AGENT_DEPLOYMENT.md) - Deployment guide

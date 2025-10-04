@@ -197,12 +197,16 @@
                 <!-- Sidebar -->
                 <aside class="api-sidebar">
                     <ul class="api-menu">
-                        <li><a href="#observability" class="active">ObservabilityHub</a></li>
+                        <li><a href="#server-setup" class="active">Server Setup</a></li>
+                        <li><a href="#observability">ObservabilityHub</a></li>
                         <li><a href="#llm-observability">LLM Observability</a></li>
                         <li><a href="#cost-observatory">Cost Observatory</a></li>
                         <li><a href="#dashboards">Dashboards</a></li>
-                        <li><a href="#telemetry">Telemetry Agents</a></li>
-                        <li><a href="#webui">Web UI Server</a></li>
+                        <li><a href="#telemetry">Cloud Telemetry</a></li>
+                        <li><a href="#databricks">Databricks Agent</a></li>
+                        <li><a href="#snowflake">Snowflake Agent</a></li>
+                        <li><a href="#saas-services">SaaS Services</a></li>
+                        <li><a href="#webui">Web UI Reference</a></li>
                     </ul>
                 </aside>
 
@@ -217,115 +221,25 @@
                     <section id="observability" class="api-section">
                         <h2>ObservabilityHub</h2>
                         <p style="color: var(--text-secondary);">
-                            The core component for comprehensive cost tracking and observability across your entire infrastructure.
+                            <strong>IMPORTANT:</strong> ObservabilityHub receives data from telemetry agents. You don't manually track costs - agents do this automatically.
                         </p>
 
                         <h3>Initialization</h3>
                         <div class="method-signature">
-                            ObservabilityHub(config: Optional[Dict] = None)
+                            ObservabilityHub()
                         </div>
-
-                        <table class="params-table">
-                            <thead>
-                                <tr>
-                                    <th>Parameter</th>
-                                    <th>Type</th>
-                                    <th>Description</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td><code>config</code></td>
-                                    <td>Optional[Dict]</td>
-                                    <td>Configuration dictionary for custom settings</td>
-                                </tr>
-                            </tbody>
-                        </table>
-
-                        <h4>track_cloud_cost()</h4>
-                        <div class="method-signature">
-                            track_cloud_cost(provider: str, service: str, cost: float, region: str = None, tags: Dict = None)
-                        </div>
-
-                        <table class="params-table">
-                            <thead>
-                                <tr>
-                                    <th>Parameter</th>
-                                    <th>Type</th>
-                                    <th>Description</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td><code>provider</code></td>
-                                    <td>str</td>
-                                    <td>Cloud provider: 'aws', 'azure', or 'gcp'</td>
-                                </tr>
-                                <tr>
-                                    <td><code>service</code></td>
-                                    <td>str</td>
-                                    <td>Service name (e.g., 'ec2', 's3', 'lambda')</td>
-                                </tr>
-                                <tr>
-                                    <td><code>cost</code></td>
-                                    <td>float</td>
-                                    <td>Cost amount in USD</td>
-                                </tr>
-                                <tr>
-                                    <td><code>region</code></td>
-                                    <td>Optional[str]</td>
-                                    <td>Cloud region (e.g., 'us-east-1')</td>
-                                </tr>
-                                <tr>
-                                    <td><code>tags</code></td>
-                                    <td>Optional[Dict]</td>
-                                    <td>Resource tags for attribution</td>
-                                </tr>
-                            </tbody>
-                        </table>
 
                         <div class="code-example">
                             <span class="code-label">PYTHON</span>
                             <code>from openfinops import ObservabilityHub
 
-hub = ObservabilityHub()
-
-# Track AWS EC2 cost
-hub.track_cloud_cost(
-    provider="aws",
-    service="ec2",
-    cost=1250.50,
-    region="us-east-1",
-    tags={"team": "ml", "environment": "production"}
-)</code>
+# Server-side initialization
+hub = ObservabilityHub()</code>
                         </div>
 
-                        <h4>get_cost_summary()</h4>
+                        <h4>register_cluster()</h4>
                         <div class="method-signature">
-                            get_cost_summary(start_date: str = None, end_date: str = None) -> Dict
-                        </div>
-
-                        <div class="return-value">
-                            <strong>Returns:</strong> Dictionary containing:
-                            <ul style="margin-top: 0.5rem;">
-                                <li><code>total_cost</code>: Total spend across all providers</li>
-                                <li><code>by_provider</code>: Cost breakdown by cloud provider</li>
-                                <li><code>by_service</code>: Cost breakdown by service</li>
-                                <li><code>trend</code>: Cost trend data</li>
-                            </ul>
-                        </div>
-                    </section>
-
-                    <!-- LLM Observability -->
-                    <section id="llm-observability" class="api-section">
-                        <h2>LLM Observability</h2>
-                        <p style="color: var(--text-secondary);">
-                            Specialized tracking for Large Language Model training and inference costs.
-                        </p>
-
-                        <h4>track_llm_training()</h4>
-                        <div class="method-signature">
-                            track_llm_training(model_name: str, training_cost: float, duration_hours: float, gpu_type: str = None)
+                            register_cluster(cluster_id: str, nodes: List[str], region: str = "us-east-1")
                         </div>
 
                         <table class="params-table">
@@ -338,95 +252,188 @@ hub.track_cloud_cost(
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td><code>model_name</code></td>
+                                    <td><code>cluster_id</code></td>
                                     <td>str</td>
-                                    <td>Name of the model being trained</td>
+                                    <td>Unique cluster identifier</td>
                                 </tr>
                                 <tr>
-                                    <td><code>training_cost</code></td>
-                                    <td>float</td>
-                                    <td>Total training cost in USD</td>
+                                    <td><code>nodes</code></td>
+                                    <td>List[str]</td>
+                                    <td>List of node hostnames or IPs</td>
                                 </tr>
                                 <tr>
-                                    <td><code>duration_hours</code></td>
-                                    <td>float</td>
-                                    <td>Training duration in hours</td>
-                                </tr>
-                                <tr>
-                                    <td><code>gpu_type</code></td>
-                                    <td>Optional[str]</td>
-                                    <td>GPU type used (e.g., 'A100', 'V100')</td>
+                                    <td><code>region</code></td>
+                                    <td>str</td>
+                                    <td>Cloud region (default: us-east-1)</td>
                                 </tr>
                             </tbody>
                         </table>
 
                         <div class="code-example">
                             <span class="code-label">PYTHON</span>
-                            <code>hub.track_llm_training(
-    model_name="gpt-4-fine-tune",
-    training_cost=2450.75,
-    duration_hours=12.5,
-    gpu_type="A100"
+                            <code>hub.register_cluster(
+    cluster_id="gpu-cluster-1",
+    nodes=["node-1", "node-2", "node-3"],
+    region="us-west-2"
 )</code>
                         </div>
 
-                        <h4>track_inference_cost()</h4>
+                        <h4>get_cluster_health_summary()</h4>
                         <div class="method-signature">
-                            track_inference_cost(model: str, requests: int, tokens: int, cost: float)
+                            get_cluster_health_summary() -> Dict
                         </div>
 
                         <div class="code-example">
                             <span class="code-label">PYTHON</span>
-                            <code>hub.track_inference_cost(
-    model="gpt-4",
-    requests=50000,
-    tokens=25000000,
-    cost=125.50
-)</code>
+                            <code># Query health (populated by agents)
+health = hub.get_cluster_health_summary()
+
+for cluster_id, metrics in health.items():
+    print(f"{cluster_id}: {metrics['health_status']}")
+    print(f"  CPU: {metrics['avg_cpu_usage']:.1f}%")
+    print(f"  GPU: {metrics['avg_gpu_usage']:.1f}%")</code>
+                        </div>
+
+                        <div class="return-value">
+                            <strong>Returns:</strong> Dictionary with cluster health metrics populated by telemetry agents
+                        </div>
+                    </section>
+
+                    <!-- LLM Observability -->
+                    <section id="llm-observability" class="api-section">
+                        <h2>LLMObservabilityHub</h2>
+                        <p style="color: var(--text-secondary);">
+                            Specialized monitoring for Large Language Model training and RAG pipelines.
+                        </p>
+
+                        <h3>Initialization</h3>
+                        <div class="method-signature">
+                            LLMObservabilityHub()
+                        </div>
+
+                        <div class="code-example">
+                            <span class="code-label">PYTHON</span>
+                            <code>from openfinops.observability.llm_observability import LLMObservabilityHub
+
+llm_hub = LLMObservabilityHub()</code>
+                        </div>
+
+                        <h4>collect_llm_training_metrics()</h4>
+                        <div class="method-signature">
+                            collect_llm_training_metrics(metrics: LLMTrainingMetrics)
+                        </div>
+
+                        <div class="code-example">
+                            <span class="code-label">PYTHON</span>
+                            <code>from openfinops.observability.llm_observability import LLMTrainingMetrics
+import time
+
+metrics = LLMTrainingMetrics(
+    run_id="llm-training-001",
+    model_name="gpt-custom-7b",
+    epoch=5,
+    step=1000,
+    training_loss=0.245,
+    validation_loss=0.289,
+    learning_rate=0.0001,
+    gpu_memory_mb=42000,
+    batch_size=32,
+    throughput_samples_per_sec=128.5,
+    timestamp=time.time()
+)
+
+llm_hub.collect_llm_training_metrics(metrics)</code>
+                        </div>
+
+                        <h4>get_training_summary()</h4>
+                        <div class="method-signature">
+                            get_training_summary(run_id: str) -> Dict
+                        </div>
+
+                        <div class="code-example">
+                            <span class="code-label">PYTHON</span>
+                            <code>summary = llm_hub.get_training_summary("llm-training-001")
+
+print(f"Model: {summary['model_name']}")
+print(f"Total Steps: {summary['total_steps']}")
+print(f"Best Loss: {summary['best_loss']:.4f}")</code>
                         </div>
                     </section>
 
                     <!-- Cost Observatory -->
                     <section id="cost-observatory" class="api-section">
-                        <h2>Cost Observatory</h2>
+                        <h2>CostObservatory</h2>
                         <p style="color: var(--text-secondary);">
-                            Advanced cost analysis and optimization recommendations.
+                            Centralized cost tracking and budget management. Receives cost data from telemetry agents.
                         </p>
 
-                        <h4>get_cost_recommendations()</h4>
+                        <h3>Initialization</h3>
                         <div class="method-signature">
-                            get_cost_recommendations(min_savings: float = 100.0) -> List[Recommendation]
+                            CostObservatory(collection_interval: float = 3600)
                         </div>
 
                         <div class="code-example">
                             <span class="code-label">PYTHON</span>
-                            <code>from openfinops.observability import CostObservatory
+                            <code>from openfinops.observability.cost_observatory import CostObservatory
 
-observatory = CostObservatory()
-
-# Get recommendations with minimum $500 savings
-recommendations = observatory.get_cost_recommendations(min_savings=500.0)
-
-for rec in recommendations:
-    print(f"{rec.title}")
-    print(f"  Savings: ${rec.estimated_savings}/month")
-    print(f"  Impact: {rec.impact_level}")
-    print(f"  Action: {rec.action}")</code>
+cost_obs = CostObservatory()</code>
                         </div>
 
-                        <h4>analyze_cost_trends()</h4>
+                        <h4>create_budget()</h4>
                         <div class="method-signature">
-                            analyze_cost_trends(days: int = 30) -> TrendAnalysis
+                            create_budget(budget: Budget)
                         </div>
 
-                        <div class="return-value">
-                            <strong>Returns:</strong> TrendAnalysis object with:
-                            <ul style="margin-top: 0.5rem;">
-                                <li><code>trend_direction</code>: 'increasing' or 'decreasing'</li>
-                                <li><code>average_daily_cost</code>: Average cost per day</li>
-                                <li><code>anomalies</code>: List of detected cost anomalies</li>
-                                <li><code>forecast</code>: 30-day cost forecast</li>
-                            </ul>
+                        <div class="code-example">
+                            <span class="code-label">PYTHON</span>
+                            <code>from openfinops.observability.cost_observatory import Budget
+import time
+
+budget = Budget(
+    budget_id="monthly-ai-budget",
+    name="AI/ML Monthly Budget",
+    amount_usd=50000.0,
+    period="monthly",
+    start_time=time.time(),
+    scope={"provider": "aws", "tags": {"team": "ml-research"}},
+    alert_threshold=0.8  # Alert at 80%
+)
+
+cost_obs.create_budget(budget)</code>
+                        </div>
+
+                        <h4>get_cost_summary()</h4>
+                        <div class="method-signature">
+                            get_cost_summary(time_range_hours: int = 24) -> Dict
+                        </div>
+
+                        <div class="code-example">
+                            <span class="code-label">PYTHON</span>
+                            <code>summary = cost_obs.get_cost_summary(time_range_hours=24)
+
+print(f"Total: ${summary['total_cost']:.2f}")
+
+for provider, cost in summary['by_provider'].items():
+    print(f"{provider}: ${cost:.2f}")
+
+for service, cost in summary['by_service'].items():
+    print(f"{service}: ${cost:.2f}")</code>
+                        </div>
+
+                        <h4>get_budget_status()</h4>
+                        <div class="method-signature">
+                            get_budget_status() -> Dict
+                        </div>
+
+                        <div class="code-example">
+                            <span class="code-label">PYTHON</span>
+                            <code>status = cost_obs.get_budget_status()
+
+for budget_id, info in status.items():
+    print(f"{info['name']}:")
+    print(f"  Budget: ${info['amount']:.2f}")
+    print(f"  Spent: ${info['spent']:.2f}")
+    print(f"  Status: {info['status']}")</code>
                         </div>
                     </section>
 
@@ -495,32 +502,879 @@ print(f"Storage: {util.storage_percent}%")</code>
                     <section id="telemetry" class="api-section">
                         <h2>Telemetry Agents</h2>
                         <p style="color: var(--text-secondary);">
-                            Distributed agents for collecting cost data from cloud providers.
+                            <strong>Deploy agents as separate processes</strong> to automatically discover resources, collect metrics, and calculate costs.
                         </p>
 
-                        <h3>Generic Telemetry Agent</h3>
+                        <h3>AWSTelemetryAgent</h3>
+                        <div class="method-signature">
+                            AWSTelemetryAgent(openfinops_endpoint: str, aws_region: str)
+                        </div>
+
+                        <table class="params-table">
+                            <thead>
+                                <tr>
+                                    <th>Parameter</th>
+                                    <th>Type</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>openfinops_endpoint</code></td>
+                                    <td>str</td>
+                                    <td>OpenFinOps server URL</td>
+                                </tr>
+                                <tr>
+                                    <td><code>aws_region</code></td>
+                                    <td>str</td>
+                                    <td>AWS region (e.g., 'us-west-2')</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
                         <div class="code-example">
                             <span class="code-label">PYTHON</span>
-                            <code>from openfinops.observability import DistributedTelemetry
+                            <code>from agents.aws_telemetry_agent import AWSTelemetryAgent
 
-# Initialize telemetry
-telemetry = DistributedTelemetry(
-    hub_url="http://openfinops-server:8080",
-    agent_id="aws-us-east-1",
-    collection_interval=300  # 5 minutes
+# Initialize agent (uses boto3 credential chain)
+agent = AWSTelemetryAgent(
+    openfinops_endpoint="http://localhost:8080",
+    aws_region="us-west-2"
 )
 
-# Start collecting metrics
-telemetry.start()
+# Register with server
+if agent.register_agent():
+    print("✓ Agent registered")
 
-# Stop collection
-telemetry.stop()</code>
+    # Run continuous collection
+    # Automatically discovers & calculates costs for:
+    # - EC2 instances, EKS clusters, Lambda functions
+    # - RDS databases, S3 buckets
+    agent.run_continuous(interval_seconds=300)</code>
+                        </div>
+
+                        <h3>AzureTelemetryAgent</h3>
+                        <div class="code-example">
+                            <span class="code-label">PYTHON</span>
+                            <code>from agents.azure_telemetry_agent import AzureTelemetryAgent
+
+agent = AzureTelemetryAgent(
+    openfinops_endpoint="http://localhost:8080",
+    subscription_id="your-subscription-id"
+)
+agent.register_agent()
+agent.run_continuous(interval_seconds=300)</code>
+                        </div>
+
+                        <h3>GCPTelemetryAgent</h3>
+                        <div class="code-example">
+                            <span class="code-label">PYTHON</span>
+                            <code>from agents.gcp_telemetry_agent import GCPTelemetryAgent
+
+agent = GCPTelemetryAgent(
+    openfinops_endpoint="http://localhost:8080",
+    project_id="your-project-id"
+)
+agent.register_agent()
+agent.run_continuous(interval_seconds=300)</code>
+                        </div>
+                    </section>
+
+                    <!-- Databricks Telemetry Agent -->
+                    <section id="databricks" class="api-section">
+                        <h2>Databricks Telemetry Agent</h2>
+                        <p style="color: var(--text-secondary);">
+                            Collect Databricks DBU consumption, cluster costs, job execution metrics, and SQL warehouse usage.
+                        </p>
+
+                        <h3>DatabricksTelemetryAgent</h3>
+                        <div class="method-signature">
+                            DatabricksTelemetryAgent(openfinops_endpoint: str, databricks_host: str, databricks_token: str, workspace_name: str = None)
+                        </div>
+
+                        <table class="params-table">
+                            <thead>
+                                <tr>
+                                    <th>Parameter</th>
+                                    <th>Type</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>openfinops_endpoint</code></td>
+                                    <td>str</td>
+                                    <td>OpenFinOps server URL (e.g., http://localhost:8080)</td>
+                                </tr>
+                                <tr>
+                                    <td><code>databricks_host</code></td>
+                                    <td>str</td>
+                                    <td>Databricks workspace URL (e.g., https://your-workspace.cloud.databricks.com)</td>
+                                </tr>
+                                <tr>
+                                    <td><code>databricks_token</code></td>
+                                    <td>str</td>
+                                    <td>Databricks personal access token</td>
+                                </tr>
+                                <tr>
+                                    <td><code>workspace_name</code></td>
+                                    <td>str (optional)</td>
+                                    <td>Workspace identifier (default: derived from host)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="code-example">
+                            <span class="code-label">PYTHON</span>
+                            <code>from agents.databricks_telemetry_agent import DatabricksTelemetryAgent
+
+# Initialize agent
+agent = DatabricksTelemetryAgent(
+    openfinops_endpoint="http://localhost:8080",
+    databricks_host="https://your-workspace.cloud.databricks.com",
+    databricks_token="dapi***",
+    workspace_name="production"
+)
+
+# Register and run
+if agent.register_agent():
+    print("✓ Databricks agent registered")
+    # Collect every 5 minutes
+    agent.run_continuous(interval_seconds=300)</code>
+                        </div>
+
+                        <h3>Metrics Collected</h3>
+                        <table class="params-table">
+                            <thead>
+                                <tr>
+                                    <th>Metric</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>cluster_metrics</code></td>
+                                    <td>Cluster uptime, instance types, worker count, DBU consumption</td>
+                                </tr>
+                                <tr>
+                                    <td><code>job_metrics</code></td>
+                                    <td>Job runtime, success/failure, execution costs</td>
+                                </tr>
+                                <tr>
+                                    <td><code>sql_warehouse_metrics</code></td>
+                                    <td>Warehouse size, state, estimated costs</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <h3>DBU Pricing</h3>
+                        <div class="info-box">
+                            <p><strong>Cost Calculation:</strong> The agent automatically calculates costs based on DBU pricing:</p>
+                            <ul>
+                                <li><strong>All-Purpose Compute:</strong> $0.40/DBU</li>
+                                <li><strong>Jobs Compute:</strong> $0.15/DBU</li>
+                                <li><strong>SQL Pro:</strong> $0.55/DBU</li>
+                                <li><strong>Serverless SQL:</strong> $0.70/DBU</li>
+                                <li><strong>Delta Live Tables:</strong> $0.20-$0.30/DBU</li>
+                            </ul>
+                        </div>
+
+                        <h3>collect_cluster_metrics()</h3>
+                        <p>Collect metrics from all clusters in the workspace.</p>
+                        <div class="method-signature">
+                            collect_cluster_metrics() → Dict[str, Any]
+                        </div>
+                        <div class="code-example">
+                            <span class="code-label">PYTHON</span>
+                            <code># Returns cluster metrics
+{
+    "total_clusters": 5,
+    "running_clusters": 3,
+    "total_estimated_cost_usd": 145.67,
+    "clusters": [
+        {
+            "cluster_name": "prod-cluster",
+            "state": "RUNNING",
+            "instance_type": "m5.xlarge",
+            "num_workers": 4,
+            "uptime_hours": 8.5,
+            "estimated_cost_usd": 32.45
+        }
+    ]
+}</code>
+                        </div>
+
+                        <h3>collect_job_metrics()</h3>
+                        <p>Collect job execution metrics and costs.</p>
+                        <div class="method-signature">
+                            collect_job_metrics(hours_lookback: int = 24) → Dict[str, Any]
+                        </div>
+                        <div class="code-example">
+                            <span class="code-label">PYTHON</span>
+                            <code># Returns job metrics for last 24 hours
+{
+    "total_runs": 42,
+    "successful_runs": 38,
+    "failed_runs": 4,
+    "total_estimated_cost_usd": 89.23,
+    "jobs": [
+        {
+            "job_id": 123,
+            "run_name": "ETL Pipeline",
+            "state": "SUCCESS",
+            "runtime_seconds": 1845,
+            "estimated_cost_usd": 12.34
+        }
+    ]
+}</code>
+                        </div>
+
+                        <h3>CLI Usage</h3>
+                        <div class="code-example">
+                            <span class="code-label">BASH</span>
+                            <code># Install dependencies
+pip install databricks-sdk requests
+
+# Set credentials
+export DATABRICKS_HOST=https://your-workspace.cloud.databricks.com
+export DATABRICKS_TOKEN=dapi***
+
+# Run agent
+python agents/databricks_telemetry_agent.py \
+  --openfinops-endpoint http://localhost:8080 \
+  --databricks-host $DATABRICKS_HOST \
+  --databricks-token $DATABRICKS_TOKEN \
+  --interval 300</code>
+                        </div>
+                    </section>
+
+                    <!-- Snowflake Telemetry Agent -->
+                    <section id="snowflake" class="api-section">
+                        <h2>Snowflake Telemetry Agent</h2>
+                        <p style="color: var(--text-secondary);">
+                            Monitor Snowflake credit consumption, warehouse usage, storage costs, and query patterns.
+                        </p>
+
+                        <h3>SnowflakeTelemetryAgent</h3>
+                        <div class="method-signature">
+                            SnowflakeTelemetryAgent(openfinops_endpoint: str, snowflake_account: str, snowflake_user: str, snowflake_password: str, snowflake_warehouse: str, edition: str = 'enterprise')
+                        </div>
+
+                        <table class="params-table">
+                            <thead>
+                                <tr>
+                                    <th>Parameter</th>
+                                    <th>Type</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>openfinops_endpoint</code></td>
+                                    <td>str</td>
+                                    <td>OpenFinOps server URL</td>
+                                </tr>
+                                <tr>
+                                    <td><code>snowflake_account</code></td>
+                                    <td>str</td>
+                                    <td>Snowflake account identifier (e.g., xy12345.us-east-1)</td>
+                                </tr>
+                                <tr>
+                                    <td><code>snowflake_user</code></td>
+                                    <td>str</td>
+                                    <td>Snowflake username</td>
+                                </tr>
+                                <tr>
+                                    <td><code>snowflake_password</code></td>
+                                    <td>str</td>
+                                    <td>Snowflake password</td>
+                                </tr>
+                                <tr>
+                                    <td><code>snowflake_warehouse</code></td>
+                                    <td>str</td>
+                                    <td>Warehouse name (default: COMPUTE_WH)</td>
+                                </tr>
+                                <tr>
+                                    <td><code>edition</code></td>
+                                    <td>str</td>
+                                    <td>Edition for pricing: 'standard', 'enterprise', 'business_critical'</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="code-example">
+                            <span class="code-label">PYTHON</span>
+                            <code>from agents.snowflake_telemetry_agent import SnowflakeTelemetryAgent
+
+# Initialize agent
+agent = SnowflakeTelemetryAgent(
+    openfinops_endpoint="http://localhost:8080",
+    snowflake_account="xy12345.us-east-1",
+    snowflake_user="admin_user",
+    snowflake_password="***",
+    snowflake_warehouse="COMPUTE_WH",
+    edition="enterprise"
+)
+
+# Register and run
+if agent.register_agent():
+    print("✓ Snowflake agent registered")
+    agent.run_continuous(interval_seconds=300)</code>
+                        </div>
+
+                        <h3>Metrics Collected</h3>
+                        <table class="params-table">
+                            <thead>
+                                <tr>
+                                    <th>Metric</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>warehouse_metrics</code></td>
+                                    <td>Credit consumption (compute + cloud services), active hours</td>
+                                </tr>
+                                <tr>
+                                    <td><code>storage_metrics</code></td>
+                                    <td>Database storage, failsafe storage, total TB</td>
+                                </tr>
+                                <tr>
+                                    <td><code>query_metrics</code></td>
+                                    <td>Query count, execution time, data scanned</td>
+                                </tr>
+                                <tr>
+                                    <td><code>user_attribution</code></td>
+                                    <td>Cost breakdown by user and warehouse</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <h3>Credit Pricing</h3>
+                        <div class="info-box">
+                            <p><strong>Cost Calculation:</strong> Automatic cost calculation based on Snowflake edition:</p>
+                            <ul>
+                                <li><strong>Standard Edition:</strong> $2.00/credit</li>
+                                <li><strong>Enterprise Edition:</strong> $3.00/credit</li>
+                                <li><strong>Business Critical:</strong> $4.00/credit</li>
+                                <li><strong>Storage:</strong> $40/TB/month (on-demand)</li>
+                            </ul>
+                        </div>
+
+                        <h3>collect_warehouse_metrics()</h3>
+                        <p>Collect warehouse credit consumption for past 24 hours.</p>
+                        <div class="method-signature">
+                            collect_warehouse_metrics(hours_lookback: int = 24) → Dict[str, Any]
+                        </div>
+                        <div class="code-example">
+                            <span class="code-label">PYTHON</span>
+                            <code># Returns warehouse metrics
+{
+    "total_warehouses": 3,
+    "total_credits_used": 145.67,
+    "total_estimated_cost_usd": 437.01,
+    "warehouses": [
+        {
+            "warehouse_name": "COMPUTE_WH",
+            "total_credits_used": 89.45,
+            "compute_credits": 78.23,
+            "cloud_service_credits": 11.22,
+            "active_hours": 18,
+            "estimated_cost_usd": 268.35
+        }
+    ]
+}</code>
+                        </div>
+
+                        <h3>collect_storage_metrics()</h3>
+                        <p>Collect storage usage across all databases.</p>
+                        <div class="method-signature">
+                            collect_storage_metrics() → Dict[str, Any]
+                        </div>
+                        <div class="code-example">
+                            <span class="code-label">PYTHON</span>
+                            <code># Returns storage metrics
+{
+    "total_storage_tb": 12.456,
+    "estimated_monthly_cost_usd": 498.24,
+    "databases": [
+        {
+            "database_name": "PROD_DB",
+            "current_storage_tb": 8.234,
+            "database_tb": 7.123,
+            "failsafe_tb": 1.111,
+            "estimated_monthly_cost_usd": 329.36
+        }
+    ]
+}</code>
+                        </div>
+
+                        <h3>CLI Usage</h3>
+                        <div class="code-example">
+                            <span class="code-label">BASH</span>
+                            <code># Install dependencies
+pip install snowflake-connector-python requests
+
+# Set credentials
+export SNOWFLAKE_USER=admin_user
+export SNOWFLAKE_PASSWORD=***
+
+# Run agent
+python agents/snowflake_telemetry_agent.py \
+  --openfinops-endpoint http://localhost:8080 \
+  --snowflake-account xy12345.us-east-1 \
+  --snowflake-warehouse COMPUTE_WH \
+  --edition enterprise \
+  --interval 300</code>
+                        </div>
+                    </section>
+
+                    <!-- SaaS Services Telemetry Agent -->
+                    <section id="saas-services" class="api-section">
+                        <h2>SaaS Services Telemetry Agent</h2>
+                        <p style="color: var(--text-secondary);">
+                            Multi-service agent for monitoring MongoDB Atlas, Redis Cloud, GitHub Actions, DataDog, and more.
+                        </p>
+
+                        <h3>SaaSServicesTelemetryAgent</h3>
+                        <div class="method-signature">
+                            SaaSServicesTelemetryAgent(openfinops_endpoint: str, config_file: str)
+                        </div>
+
+                        <table class="params-table">
+                            <thead>
+                                <tr>
+                                    <th>Parameter</th>
+                                    <th>Type</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>openfinops_endpoint</code></td>
+                                    <td>str</td>
+                                    <td>OpenFinOps server URL</td>
+                                </tr>
+                                <tr>
+                                    <td><code>config_file</code></td>
+                                    <td>str</td>
+                                    <td>Path to JSON configuration file</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <h3>Configuration File</h3>
+                        <p>Create a JSON configuration file to enable specific services:</p>
+                        <div class="code-example">
+                            <span class="code-label">JSON</span>
+                            <code>{
+  "mongodb_atlas": {
+    "enabled": true,
+    "public_key": "your_public_key",
+    "private_key": "your_private_key",
+    "project_id": "your_project_id"
+  },
+  "redis_cloud": {
+    "enabled": true,
+    "api_key": "your_api_key",
+    "secret_key": "your_secret_key",
+    "account_id": "your_account_id"
+  },
+  "github_actions": {
+    "enabled": true,
+    "token": "ghp_your_token",
+    "org_name": "your_organization"
+  },
+  "datadog": {
+    "enabled": true,
+    "api_key": "your_api_key",
+    "app_key": "your_app_key"
+  }
+}</code>
+                        </div>
+
+                        <h3>Python Usage</h3>
+                        <div class="code-example">
+                            <span class="code-label">PYTHON</span>
+                            <code>from agents.saas_services_telemetry_agent import SaaSServicesTelemetryAgent
+
+# Initialize agent with config
+agent = SaaSServicesTelemetryAgent(
+    openfinops_endpoint="http://localhost:8080",
+    config_file="saas_config.json"
+)
+
+# Register and run (collect hourly)
+if agent.register_agent():
+    print("✓ SaaS services agent registered")
+    agent.run_continuous(interval_seconds=3600)</code>
+                        </div>
+
+                        <h3>Supported Services</h3>
+                        <table class="params-table">
+                            <thead>
+                                <tr>
+                                    <th>Service</th>
+                                    <th>Metrics Collected</th>
+                                    <th>Cost Estimation</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>mongodb_atlas</code></td>
+                                    <td>Cluster size, replication, sharding, storage</td>
+                                    <td>M10: $0.08/hr, M30: $0.54/hr</td>
+                                </tr>
+                                <tr>
+                                    <td><code>redis_cloud</code></td>
+                                    <td>Subscriptions, databases, throughput</td>
+                                    <td>Based on subscription pricing</td>
+                                </tr>
+                                <tr>
+                                    <td><code>github_actions</code></td>
+                                    <td>Workflow minutes, billable time</td>
+                                    <td>Linux: $0.008/min, macOS: $0.08/min</td>
+                                </tr>
+                                <tr>
+                                    <td><code>datadog</code></td>
+                                    <td>Host count, usage metrics</td>
+                                    <td>~$15/host/month</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <h3>MongoDB Atlas Metrics</h3>
+                        <div class="code-example">
+                            <span class="code-label">PYTHON</span>
+                            <code># MongoDB Atlas metrics structure
+{
+    "service": "mongodb_atlas",
+    "total_clusters": 3,
+    "total_daily_cost_usd": 47.52,
+    "clusters": [
+        {
+            "cluster_name": "prod-cluster",
+            "instance_size": "M30",
+            "num_shards": 1,
+            "replication_factor": 3,
+            "provider": "AWS",
+            "region": "us-east-1",
+            "hourly_cost_usd": 1.62,
+            "daily_cost_usd": 38.88
+        }
+    ]
+}</code>
+                        </div>
+
+                        <h3>GitHub Actions Metrics</h3>
+                        <div class="code-example">
+                            <span class="code-label">PYTHON</span>
+                            <code># GitHub Actions metrics structure
+{
+    "service": "github_actions",
+    "total_minutes_used": 12450,
+    "included_minutes": 3000,
+    "billable_minutes": 9450,
+    "estimated_monthly_cost_usd": 75.60,
+    "minutes_used_breakdown": {
+        "UBUNTU": 8000,
+        "MACOS": 1450
+    }
+}</code>
+                        </div>
+
+                        <h3>CLI Usage</h3>
+                        <div class="code-example">
+                            <span class="code-label">BASH</span>
+                            <code># Create sample configuration
+python agents/saas_services_telemetry_agent.py \
+  --create-config saas_config.json
+
+# Edit the configuration file with your credentials
+# Then run the agent
+python agents/saas_services_telemetry_agent.py \
+  --openfinops-endpoint http://localhost:8080 \
+  --config saas_config.json \
+  --interval 3600</code>
+                        </div>
+
+                        <h3>Adding Custom Services</h3>
+                        <p>Extend the agent by creating custom collectors:</p>
+                        <div class="code-example">
+                            <span class="code-label">PYTHON</span>
+                            <code>from agents.saas_services_telemetry_agent import SaaSServicesTelemetryAgent
+
+class CustomServiceCollector:
+    def __init__(self, api_key: str):
+        self.api_key = api_key
+
+    def collect_metrics(self) -> dict:
+        # Your custom collection logic
+        return {
+            "service": "custom_service",
+            "total_cost": 123.45,
+            "metrics": {...}
+        }
+
+# Add to agent configuration
+agent = SaaSServicesTelemetryAgent(
+    openfinops_endpoint="http://localhost:8080",
+    config_file="config.json"
+)
+agent.collectors.append(("custom", CustomServiceCollector("api_key")))
+agent.run_continuous(interval_seconds=3600)</code>
+                        </div>
+                    </section>
+
+                    <!-- Server Setup -->
+                    <section id="server-setup" class="api-section">
+                        <h2>Server Setup & Configuration</h2>
+                        <p style="color: var(--text-secondary);">
+                            Set up the OpenFinOps server to receive telemetry from agents and serve dashboards.
+                        </p>
+
+                        <h3>Step 1: Start the OpenFinOps Server</h3>
+                        <p style="color: var(--text-secondary);">
+                            The server provides both web dashboards and API endpoints for telemetry ingestion.
+                        </p>
+
+                        <h4>Option A: Using CLI</h4>
+                        <div class="code-example">
+                            <span class="code-label">BASH</span>
+                            <code># Start server on default port 8080
+openfinops-dashboard
+
+# Start on custom host/port
+openfinops-dashboard --host 0.0.0.0 --port 8080
+
+# Alternative command
+openfinops-server --host 0.0.0.0 --port 8080</code>
+                        </div>
+
+                        <h4>Option B: Using Python</h4>
+                        <div class="code-example">
+                            <span class="code-label">PYTHON</span>
+                            <code>from openfinops.webui import start_server
+
+# Start server
+start_server(
+    host='0.0.0.0',
+    port=8080,
+    debug=False
+)</code>
+                        </div>
+
+                        <h3>Step 2: Verify Server is Running</h3>
+                        <div class="code-example">
+                            <span class="code-label">BASH</span>
+                            <code># Check health endpoint
+curl http://localhost:8080/api/health
+
+# Expected response: {"status": "healthy"}
+
+# Verify server in logs
+# You should see:
+# 🚀 Starting OpenFinOps Web UI Server...
+#    Host: 0.0.0.0
+#    Port: 8080</code>
+                        </div>
+
+                        <h3>Step 3: Configure Telemetry Endpoints</h3>
+                        <p style="color: var(--text-secondary);">
+                            The server automatically exposes telemetry endpoints when started. Agents use these to send data.
+                        </p>
+
+                        <h4>Available API Endpoints</h4>
+                        <table class="params-table">
+                            <thead>
+                                <tr>
+                                    <th>Endpoint</th>
+                                    <th>Method</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>/api/v1/agents/register</code></td>
+                                    <td>POST</td>
+                                    <td>Agent registration endpoint</td>
+                                </tr>
+                                <tr>
+                                    <td><code>/api/v1/telemetry/ingest</code></td>
+                                    <td>POST</td>
+                                    <td>Telemetry data ingestion</td>
+                                </tr>
+                                <tr>
+                                    <td><code>/api/health</code></td>
+                                    <td>GET</td>
+                                    <td>Server health check</td>
+                                </tr>
+                                <tr>
+                                    <td><code>/</code></td>
+                                    <td>GET</td>
+                                    <td>Overview dashboard</td>
+                                </tr>
+                                <tr>
+                                    <td><code>/dashboard/cfo</code></td>
+                                    <td>GET</td>
+                                    <td>CFO executive dashboard</td>
+                                </tr>
+                                <tr>
+                                    <td><code>/dashboard/coo</code></td>
+                                    <td>GET</td>
+                                    <td>COO operational dashboard</td>
+                                </tr>
+                                <tr>
+                                    <td><code>/dashboard/infrastructure</code></td>
+                                    <td>GET</td>
+                                    <td>Infrastructure leader dashboard</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <h3>Step 4: Initialize Observability Components</h3>
+                        <p style="color: var(--text-secondary);">
+                            The server automatically initializes these components, but you can access them programmatically.
+                        </p>
+
+                        <div class="code-example">
+                            <span class="code-label">PYTHON</span>
+                            <code>from openfinops import ObservabilityHub
+from openfinops.observability.cost_observatory import CostObservatory
+from openfinops.observability.llm_observability import LLMObservabilityHub
+
+# Initialize components (done automatically by server)
+hub = ObservabilityHub()
+cost_obs = CostObservatory()
+llm_hub = LLMObservabilityHub()
+
+# These will receive data from agents automatically
+# No manual configuration needed</code>
+                        </div>
+
+                        <h3>Step 5: Deploy Telemetry Agents</h3>
+                        <p style="color: var(--text-secondary);">
+                            Once the server is running, deploy agents to start collecting data.
+                        </p>
+
+                        <div class="code-example">
+                            <span class="code-label">PYTHON</span>
+                            <code># deploy_agent.py
+from agents.aws_telemetry_agent import AWSTelemetryAgent
+
+# Point agent to your server
+agent = AWSTelemetryAgent(
+    openfinops_endpoint="http://localhost:8080",  # Your server URL
+    aws_region="us-west-2"
+)
+
+# Register with server
+if agent.register_agent():
+    print("✓ Agent registered with server")
+
+    # Start continuous collection
+    # Agent will POST to http://localhost:8080/api/v1/telemetry/ingest
+    agent.run_continuous(interval_seconds=300)</code>
+                        </div>
+
+                        <h3>Complete Setup Example</h3>
+                        <div class="code-example">
+                            <span class="code-label">PYTHON</span>
+                            <code># 1. Start server (in one terminal/process)
+# openfinops-dashboard --port 8080
+
+# 2. Deploy agent (in another terminal/process)
+from agents.aws_telemetry_agent import AWSTelemetryAgent
+
+agent = AWSTelemetryAgent(
+    openfinops_endpoint="http://localhost:8080",
+    aws_region="us-west-2"
+)
+
+agent.register_agent()
+agent.run_continuous(interval_seconds=300)
+
+# 3. Access dashboards in browser
+# http://localhost:8080/
+# http://localhost:8080/dashboard/cfo
+# http://localhost:8080/dashboard/coo</code>
+                        </div>
+
+                        <h3>Production Deployment</h3>
+                        <p style="color: var(--text-secondary);">
+                            For production, run the server with proper configuration.
+                        </p>
+
+                        <div class="code-example">
+                            <span class="code-label">BASH</span>
+                            <code># Using systemd service
+# /etc/systemd/system/openfinops-server.service
+[Unit]
+Description=OpenFinOps Server
+After=network.target
+
+[Service]
+Type=simple
+User=openfinops
+WorkingDirectory=/opt/openfinops
+Environment="HOST=0.0.0.0"
+Environment="PORT=8080"
+ExecStart=/usr/bin/openfinops-dashboard --host 0.0.0.0 --port 8080
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+
+# Enable and start
+sudo systemctl enable openfinops-server
+sudo systemctl start openfinops-server</code>
+                        </div>
+
+                        <div class="code-example">
+                            <span class="code-label">DOCKER</span>
+                            <code># Using Docker
+docker run -d \
+  --name openfinops-server \
+  -p 8080:8080 \
+  -e HOST=0.0.0.0 \
+  -e PORT=8080 \
+  openfinops/server:latest
+
+# Using Docker Compose
+# docker-compose.yml
+version: '3.8'
+services:
+  openfinops-server:
+    image: openfinops/server:latest
+    ports:
+      - "8080:8080"
+    environment:
+      - HOST=0.0.0.0
+      - PORT=8080
+    restart: always</code>
+                        </div>
+
+                        <h3>Network Configuration</h3>
+                        <p style="color: var(--text-secondary);">
+                            Ensure agents can reach the server on the configured port.
+                        </p>
+
+                        <div class="code-example">
+                            <span class="code-label">BASH</span>
+                            <code># Open firewall port (if needed)
+sudo ufw allow 8080/tcp
+
+# Verify server is listening
+netstat -tulpn | grep 8080
+
+# Test from agent machine
+curl http://your-server-ip:8080/api/health</code>
                         </div>
                     </section>
 
                     <!-- Web UI Server -->
                     <section id="webui" class="api-section">
-                        <h2>Web UI Server</h2>
+                        <h2>Web UI Reference</h2>
                         <p style="color: var(--text-secondary);">
                             Flask-based web server with real-time WebSocket updates.
                         </p>
@@ -557,26 +1411,56 @@ telemetry.stop()</code>
                             </tbody>
                         </table>
 
+                        <h4>WebSocket Real-Time Updates</h4>
+                        <p style="color: var(--text-secondary);">
+                            The server pushes real-time updates to connected clients every 5 seconds.
+                        </p>
+
                         <div class="code-example">
-                            <span class="code-label">PYTHON</span>
-                            <code>from openfinops.webui import start_server
+                            <span class="code-label">JAVASCRIPT</span>
+                            <code>// Client-side WebSocket connection
+const socket = io('http://localhost:8080');
 
-# Start with custom configuration
-start_server(
-    host='0.0.0.0',
-    port=8080,
-    debug=False
-)
+// Listen for cost updates
+socket.on('cost_update', (data) => {
+    console.log('New cost data:', data);
+    updateDashboard(data);
+});
 
-# Available endpoints:
-# - GET  /                              # Overview dashboard
-# - GET  /dashboard/cfo                 # CFO dashboard
-# - GET  /dashboard/coo                 # COO dashboard
-# - GET  /dashboard/infrastructure      # Infrastructure dashboard
-# - GET  /api/health                    # Health check
-# - GET  /api/metrics                   # Get current metrics
-# - WS   /socket.io                     # WebSocket connection</code>
+// Listen for metric updates
+socket.on('metrics_update', (data) => {
+    console.log('New metrics:', data);
+    updateCharts(data);
+});</code>
                         </div>
+
+                        <h4>Dashboard Routes</h4>
+                        <table class="params-table">
+                            <thead>
+                                <tr>
+                                    <th>Route</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>/</code></td>
+                                    <td>Overview dashboard with key metrics</td>
+                                </tr>
+                                <tr>
+                                    <td><code>/dashboard/cfo</code></td>
+                                    <td>CFO executive financial dashboard</td>
+                                </tr>
+                                <tr>
+                                    <td><code>/dashboard/coo</code></td>
+                                    <td>COO operational efficiency dashboard</td>
+                                </tr>
+                                <tr>
+                                    <td><code>/dashboard/infrastructure</code></td>
+                                    <td>Infrastructure leader technical dashboard</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </section>
                 </div>
             </div>

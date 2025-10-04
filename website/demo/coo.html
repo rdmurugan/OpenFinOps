@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COO Dashboard - OpenFinOps Demo</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0a0f1e 0%, #1a1f2e 100%);
+            color: white;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .dashboard-header {
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .dashboard-header h1 {
+            font-size: 2.5rem;
+            margin: 0;
+            background: linear-gradient(135deg, #8b5cf6, #6366f1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .back-button {
+            padding: 0.75rem 1.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(-5px);
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .metric-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .metric-card:hover {
+            border-color: #8b5cf6;
+            box-shadow: 0 8px 32px rgba(139, 92, 246, 0.2);
+        }
+
+        .metric-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #8b5cf6, #6366f1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .metric-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .metric-subtitle {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 2rem;
+        }
+
+        .chart-card h3 {
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            color: white;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+
+        .efficiency-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .efficiency-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 1.5rem;
+        }
+
+        .efficiency-card h4 {
+            margin: 0 0 1rem 0;
+            color: white;
+            font-size: 1.1rem;
+        }
+
+        .efficiency-bar {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .efficiency-label {
+            min-width: 80px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .efficiency-progress {
+            flex: 1;
+            height: 24px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 0 1rem;
+        }
+
+        .efficiency-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #10b981, #059669);
+            border-radius: 12px;
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 0.5rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .efficiency-fill.warning {
+            background: linear-gradient(90deg, #fbbf24, #f59e0b);
+        }
+
+        .efficiency-fill.critical {
+            background: linear-gradient(90deg, #ef4444, #dc2626);
+        }
+
+        .performance-table {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            overflow-x: auto;
+        }
+
+        .performance-table h3 {
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            color: white;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: rgba(139, 92, 246, 0.1);
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+        }
+
+        th {
+            color: #8b5cf6;
+            font-weight: 600;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        tbody tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .status-excellent {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+
+        .status-good {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+        }
+
+        .status-fair {
+            background: rgba(251, 191, 36, 0.2);
+            color: #fbbf24;
+        }
+
+        @media (max-width: 768px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .dashboard-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="dashboard-header">
+            <h1>
+                <i class="fas fa-cogs"></i> COO Operational Dashboard
+            </h1>
+            <a href="../demo-static.html" class="back-button">
+                <i class="fas fa-arrow-left"></i> Back to Demos
+            </a>
+        </div>
+
+        <!-- Operational Metrics -->
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-icon">
+                    <i class="fas fa-tachometer-alt"></i>
+                </div>
+                <div class="metric-label">System Uptime</div>
+                <div class="metric-value">99.97%</div>
+                <div class="metric-subtitle">Last 30 days</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-icon">
+                    <i class="fas fa-microchip"></i>
+                </div>
+                <div class="metric-label">Avg CPU Utilization</div>
+                <div class="metric-value">68%</div>
+                <div class="metric-subtitle">Across all resources</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-icon">
+                    <i class="fas fa-memory"></i>
+                </div>
+                <div class="metric-label">Avg Memory Usage</div>
+                <div class="metric-value">72%</div>
+                <div class="metric-subtitle">Optimal range</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="metric-label">Avg Response Time</div>
+                <div class="metric-value">124ms</div>
+                <div class="metric-subtitle">p95: 280ms</div>
+            </div>
+        </div>
+
+        <!-- Resource Efficiency -->
+        <div class="efficiency-cards">
+            <div class="efficiency-card">
+                <h4><i class="fas fa-server"></i> Compute Efficiency</h4>
+                <div class="efficiency-bar">
+                    <span class="efficiency-label">CPU</span>
+                    <div class="efficiency-progress">
+                        <div class="efficiency-fill" style="width: 68%;">68%</div>
+                    </div>
+                </div>
+                <div class="efficiency-bar">
+                    <span class="efficiency-label">Memory</span>
+                    <div class="efficiency-progress">
+                        <div class="efficiency-fill" style="width: 72%;">72%</div>
+                    </div>
+                </div>
+                <div class="efficiency-bar">
+                    <span class="efficiency-label">Disk I/O</span>
+                    <div class="efficiency-progress">
+                        <div class="efficiency-fill warning" style="width: 45%;">45%</div>
+                    </div>
+                </div>
+                <div class="efficiency-bar">
+                    <span class="efficiency-label">Network</span>
+                    <div class="efficiency-progress">
+                        <div class="efficiency-fill" style="width: 58%;">58%</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="efficiency-card">
+                <h4><i class="fas fa-database"></i> Storage Efficiency</h4>
+                <div class="efficiency-bar">
+                    <span class="efficiency-label">S3</span>
+                    <div class="efficiency-progress">
+                        <div class="efficiency-fill critical" style="width: 84%;">84%</div>
+                    </div>
+                </div>
+                <div class="efficiency-bar">
+                    <span class="efficiency-label">EBS</span>
+                    <div class="efficiency-progress">
+                        <div class="efficiency-fill" style="width: 67%;">67%</div>
+                    </div>
+                </div>
+                <div class="efficiency-bar">
+                    <span class="efficiency-label">Azure Blob</span>
+                    <div class="efficiency-progress">
+                        <div class="efficiency-fill" style="width: 71%;">71%</div>
+                    </div>
+                </div>
+                <div class="efficiency-bar">
+                    <span class="efficiency-label">GCS</span>
+                    <div class="efficiency-progress">
+                        <div class="efficiency-fill warning" style="width: 55%;">55%</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="efficiency-card">
+                <h4><i class="fas fa-chart-line"></i> Data Platform Efficiency</h4>
+                <div class="efficiency-bar">
+                    <span class="efficiency-label">Databricks</span>
+                    <div class="efficiency-progress">
+                        <div class="efficiency-fill" style="width: 76%;">76%</div>
+                    </div>
+                </div>
+                <div class="efficiency-bar">
+                    <span class="efficiency-label">Snowflake</span>
+                    <div class="efficiency-progress">
+                        <div class="efficiency-fill warning" style="width: 82%;">82%</div>
+                    </div>
+                </div>
+                <div class="efficiency-bar">
+                    <span class="efficiency-label">MongoDB</span>
+                    <div class="efficiency-progress">
+                        <div class="efficiency-fill" style="width: 64%;">64%</div>
+                    </div>
+                </div>
+                <div class="efficiency-bar">
+                    <span class="efficiency-label">Redis</span>
+                    <div class="efficiency-progress">
+                        <div class="efficiency-fill" style="width: 59%;">59%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Performance Charts -->
+        <div class="charts-grid">
+            <div class="chart-card">
+                <h3>Resource Utilization Over Time</h3>
+                <div class="chart-container">
+                    <canvas id="utilizationChart"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <h3>Response Time Distribution</h3>
+                <div class="chart-container">
+                    <canvas id="responseTimeChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="charts-grid">
+            <div class="chart-card">
+                <h3>Throughput by Service</h3>
+                <div class="chart-container">
+                    <canvas id="throughputChart"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <h3>Error Rate Monitoring</h3>
+                <div class="chart-container">
+                    <canvas id="errorRateChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Performance Table -->
+        <div class="performance-table">
+            <h3>Service Performance Metrics</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Service</th>
+                        <th>Requests/sec</th>
+                        <th>Avg Response Time</th>
+                        <th>Error Rate</th>
+                        <th>Performance</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><i class="fas fa-globe"></i> API Gateway</td>
+                        <td>1,234</td>
+                        <td>87ms</td>
+                        <td>0.02%</td>
+                        <td><span class="status-badge status-excellent">Excellent</span></td>
+                    </tr>
+                    <tr>
+                        <td><i class="fas fa-server"></i> Web Application</td>
+                        <td>856</td>
+                        <td>124ms</td>
+                        <td>0.05%</td>
+                        <td><span class="status-badge status-excellent">Excellent</span></td>
+                    </tr>
+                    <tr>
+                        <td><i class="fas fa-database"></i> Database Queries</td>
+                        <td>2,345</td>
+                        <td>45ms</td>
+                        <td>0.01%</td>
+                        <td><span class="status-badge status-excellent">Excellent</span></td>
+                    </tr>
+                    <tr>
+                        <td><i class="fas fa-cog"></i> Background Jobs</td>
+                        <td>127</td>
+                        <td>3,420ms</td>
+                        <td>0.12%</td>
+                        <td><span class="status-badge status-good">Good</span></td>
+                    </tr>
+                    <tr>
+                        <td><i class="fas fa-chart-bar"></i> Analytics Pipeline</td>
+                        <td>234</td>
+                        <td>892ms</td>
+                        <td>0.08%</td>
+                        <td><span class="status-badge status-good">Good</span></td>
+                    </tr>
+                    <tr>
+                        <td><i class="fas fa-robot"></i> ML Inference</td>
+                        <td>445</td>
+                        <td>256ms</td>
+                        <td>0.15%</td>
+                        <td><span class="status-badge status-fair">Fair</span></td>
+                    </tr>
+                    <tr>
+                        <td><i class="fas fa-file-export"></i> Data Export</td>
+                        <td>67</td>
+                        <td>5,234ms</td>
+                        <td>0.03%</td>
+                        <td><span class="status-badge status-good">Good</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Resource Utilization Over Time
+        const ctxUtil = document.getElementById('utilizationChart').getContext('2d');
+
+        // Generate time labels
+        const hours = [];
+        for (let i = 23; i >= 0; i--) {
+            hours.push(`${i}h ago`);
+        }
+        hours.reverse();
+
+        new Chart(ctxUtil, {
+            type: 'line',
+            data: {
+                labels: hours,
+                datasets: [
+                    {
+                        label: 'CPU',
+                        data: Array.from({length: 24}, () => 60 + Math.random() * 20),
+                        borderColor: 'rgba(239, 68, 68, 1)',
+                        backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                        tension: 0.4,
+                        borderWidth: 2,
+                        pointRadius: 0
+                    },
+                    {
+                        label: 'Memory',
+                        data: Array.from({length: 24}, () => 65 + Math.random() * 15),
+                        borderColor: 'rgba(59, 130, 246, 1)',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        tension: 0.4,
+                        borderWidth: 2,
+                        pointRadius: 0
+                    },
+                    {
+                        label: 'Network',
+                        data: Array.from({length: 24}, () => 50 + Math.random() * 20),
+                        borderColor: 'rgba(16, 185, 129, 1)',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        tension: 0.4,
+                        borderWidth: 2,
+                        pointRadius: 0
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    intersect: false,
+                    mode: 'index'
+                },
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: 'white',
+                            font: { size: 12 }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: {
+                            color: 'rgba(255, 255, 255, 0.7)',
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        },
+                        grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                    },
+                    x: {
+                        ticks: {
+                            color: 'rgba(255, 255, 255, 0.7)',
+                            maxRotation: 45,
+                            minRotation: 45
+                        },
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+
+        // Response Time Distribution
+        const ctxResponse = document.getElementById('responseTimeChart').getContext('2d');
+        new Chart(ctxResponse, {
+            type: 'bar',
+            data: {
+                labels: ['< 50ms', '50-100ms', '100-200ms', '200-500ms', '500ms-1s', '> 1s'],
+                datasets: [{
+                    label: 'Request Count',
+                    data: [15234, 28456, 34567, 8923, 2345, 567],
+                    backgroundColor: [
+                        'rgba(16, 185, 129, 0.8)',
+                        'rgba(59, 130, 246, 0.8)',
+                        'rgba(139, 92, 246, 0.8)',
+                        'rgba(251, 191, 36, 0.8)',
+                        'rgba(249, 115, 22, 0.8)',
+                        'rgba(239, 68, 68, 0.8)'
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            color: 'rgba(255, 255, 255, 0.7)',
+                            callback: function(value) {
+                                return (value / 1000) + 'k';
+                            }
+                        },
+                        grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                    },
+                    x: {
+                        ticks: { color: 'rgba(255, 255, 255, 0.7)' },
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+
+        // Throughput by Service
+        const ctxThroughput = document.getElementById('throughputChart').getContext('2d');
+        new Chart(ctxThroughput, {
+            type: 'bar',
+            data: {
+                labels: ['API Gateway', 'Web App', 'Database', 'Background Jobs', 'Analytics', 'ML Inference'],
+                datasets: [{
+                    label: 'Requests per Second',
+                    data: [1234, 856, 2345, 127, 234, 445],
+                    backgroundColor: 'rgba(139, 92, 246, 0.8)',
+                    borderColor: 'rgba(139, 92, 246, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: 'y',
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        ticks: {
+                            color: 'rgba(255, 255, 255, 0.7)'
+                        },
+                        grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                    },
+                    y: {
+                        ticks: { color: 'rgba(255, 255, 255, 0.7)' },
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+
+        // Error Rate Monitoring
+        const ctxError = document.getElementById('errorRateChart').getContext('2d');
+
+        // Generate time labels for last 12 hours
+        const errorHours = [];
+        for (let i = 11; i >= 0; i--) {
+            errorHours.push(`${i}h ago`);
+        }
+        errorHours.reverse();
+
+        new Chart(ctxError, {
+            type: 'line',
+            data: {
+                labels: errorHours,
+                datasets: [{
+                    label: 'Error Rate (%)',
+                    data: Array.from({length: 12}, () => 0.01 + Math.random() * 0.15),
+                    borderColor: 'rgba(239, 68, 68, 1)',
+                    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                    fill: true,
+                    tension: 0.4,
+                    borderWidth: 2,
+                    pointRadius: 3,
+                    pointHoverRadius: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            color: 'rgba(255, 255, 255, 0.7)',
+                            callback: function(value) {
+                                return value.toFixed(2) + '%';
+                            }
+                        },
+                        grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                    },
+                    x: {
+                        ticks: { color: 'rgba(255, 255, 255, 0.7)' },
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

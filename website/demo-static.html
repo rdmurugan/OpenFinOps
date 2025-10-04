@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Demo - OpenFinOps</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .demo-page {
+            padding: 120px 0 80px;
+        }
+
+        .demo-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .demo-header h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .demo-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .demo-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-color);
+            box-shadow: 0 10px 40px rgba(0, 212, 170, 0.2);
+        }
+
+        .demo-card-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .demo-card h3 {
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+
+        .demo-card p {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        .demo-btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            background: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .demo-btn:hover {
+            background: var(--secondary-color);
+            transform: translateX(5px);
+        }
+
+        .info-banner {
+            background: rgba(0, 168, 255, 0.1);
+            border-left: 4px solid var(--secondary-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 3rem;
+        }
+
+        .feature-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .feature-item i {
+            color: var(--primary-color);
+            font-size: 1.25rem;
+            margin-top: 0.25rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-wrapper">
+                <div class="logo">
+                    <i class="fas fa-chart-line"></i>
+                    <span>OpenFinOps</span>
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="features.html">Features</a></li>
+                    <li><a href="documentation.html">Documentation</a></li>
+                    <li><a href="api.html">API Reference</a></li>
+                    <li><a href="demo-static.html" class="demo-btn active">Live Demo</a></li>
+                    <li><a href="https://github.com/rdmurugan/openfinops" target="_blank"><i class="fab fa-github"></i></a></li>
+                </ul>
+                <div class="mobile-menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Demo Page -->
+    <div class="demo-page">
+        <div class="container">
+            <div class="demo-header">
+                <h1>Interactive Demo Dashboards</h1>
+                <p style="font-size: 1.25rem; color: var(--text-secondary);">
+                    Experience OpenFinOps with live, interactive dashboards powered by real-time data
+                </p>
+            </div>
+
+            <div class="info-banner">
+                <p style="margin: 0; color: white;">
+                    <i class="fas fa-info-circle" style="color: var(--secondary-color);"></i>
+                    <strong>Static Demo Mode:</strong> These dashboards run entirely in your browser with sample data.
+                    No server required! Perfect for exploring features before deployment.
+                </p>
+            </div>
+
+            <div class="demo-grid">
+                <!-- Overview Dashboard -->
+                <div class="demo-card" onclick="window.location.href='demo/overview.html'">
+                    <div class="demo-card-icon">
+                        <i class="fas fa-chart-pie"></i>
+                    </div>
+                    <h3>Overview Dashboard</h3>
+                    <p>Real-time cost monitoring across all services with live metrics and trends</p>
+                    <div class="feature-item">
+                        <i class="fas fa-check"></i>
+                        <div>
+                            <strong>Cost Breakdown</strong>
+                            <p style="font-size: 0.9rem; margin: 0;">AWS, Azure, GCP, Databricks, Snowflake</p>
+                        </div>
+                    </div>
+                    <div class="feature-item" style="margin-top: 1rem;">
+                        <i class="fas fa-check"></i>
+                        <div>
+                            <strong>Live Charts</strong>
+                            <p style="font-size: 0.9rem; margin: 0;">Interactive visualizations with Chart.js</p>
+                        </div>
+                    </div>
+                    <a href="demo/overview.html" class="demo-btn" style="margin-top: 1.5rem;">
+                        Launch Dashboard <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <!-- CFO Dashboard -->
+                <div class="demo-card" onclick="window.location.href='demo/cfo.html'">
+                    <div class="demo-card-icon">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <h3>CFO Executive Dashboard</h3>
+                    <p>Financial analytics, budget tracking, and ROI analysis for executive decision-making</p>
+                    <div class="feature-item">
+                        <i class="fas fa-check"></i>
+                        <div>
+                            <strong>Budget vs Actual</strong>
+                            <p style="font-size: 0.9rem; margin: 0;">Track spending against budgets</p>
+                        </div>
+                    </div>
+                    <div class="feature-item" style="margin-top: 1rem;">
+                        <i class="fas fa-check"></i>
+                        <div>
+                            <strong>ROI Analysis</strong>
+                            <p style="font-size: 0.9rem; margin: 0;">Cost optimization opportunities</p>
+                        </div>
+                    </div>
+                    <a href="demo/cfo.html" class="demo-btn" style="margin-top: 1.5rem;">
+                        Launch Dashboard <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <!-- COO Dashboard -->
+                <div class="demo-card" onclick="window.location.href='demo/coo.html'">
+                    <div class="demo-card-icon">
+                        <i class="fas fa-cogs"></i>
+                    </div>
+                    <h3>COO Operational Dashboard</h3>
+                    <p>Operational efficiency metrics, resource utilization, and performance tracking</p>
+                    <div class="feature-item">
+                        <i class="fas fa-check"></i>
+                        <div>
+                            <strong>Resource Efficiency</strong>
+                            <p style="font-size: 0.9rem; margin: 0;">CPU, memory, storage utilization</p>
+                        </div>
+                    </div>
+                    <div class="feature-item" style="margin-top: 1rem;">
+                        <i class="fas fa-check"></i>
+                        <div>
+                            <strong>Performance Metrics</strong>
+                            <p style="font-size: 0.9rem; margin: 0;">Response times, throughput</p>
+                        </div>
+                    </div>
+                    <a href="demo/coo.html" class="demo-btn" style="margin-top: 1.5rem;">
+                        Launch Dashboard <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <!-- Infrastructure Dashboard -->
+                <div class="demo-card" onclick="window.location.href='demo/infrastructure.html'">
+                    <div class="demo-card-icon">
+                        <i class="fas fa-server"></i>
+                    </div>
+                    <h3>Infrastructure Dashboard</h3>
+                    <p>Cluster health, resource capacity, and infrastructure cost optimization</p>
+                    <div class="feature-item">
+                        <i class="fas fa-check"></i>
+                        <div>
+                            <strong>Cluster Health</strong>
+                            <p style="font-size: 0.9rem; margin: 0;">Monitor all compute clusters</p>
+                        </div>
+                    </div>
+                    <div class="feature-item" style="margin-top: 1rem;">
+                        <i class="fas fa-check"></i>
+                        <div>
+                            <strong>Capacity Planning</strong>
+                            <p style="font-size: 0.9rem; margin: 0;">Predict resource needs</p>
+                        </div>
+                    </div>
+                    <a href="demo/infrastructure.html" class="demo-btn" style="margin-top: 1.5rem;">
+                        Launch Dashboard <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div style="margin-top: 4rem;">
+                <h2 style="text-align: center; margin-bottom: 2rem;">Demo Features</h2>
+                <div class="feature-list">
+                    <div class="feature-item">
+                        <i class="fas fa-chart-line"></i>
+                        <div>
+                            <strong>Interactive Charts</strong>
+                            <p style="margin: 0; color: var(--text-secondary);">Powered by Chart.js with zoom and pan</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-browser"></i>
+                        <div>
+                            <strong>No Server Required</strong>
+                            <p style="margin: 0; color: var(--text-secondary);">Pure client-side JavaScript</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-database"></i>
+                        <div>
+                            <strong>Sample Data</strong>
+                            <p style="margin: 0; color: var(--text-secondary);">Realistic multi-cloud cost data</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-mobile-alt"></i>
+                        <div>
+                            <strong>Responsive</strong>
+                            <p style="margin: 0; color: var(--text-secondary);">Works on mobile and desktop</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <div>
+                            <strong>Fast Loading</strong>
+                            <p style="margin: 0; color: var(--text-secondary);">Instant dashboard rendering</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-lock"></i>
+                        <div>
+                            <strong>Privacy First</strong>
+                            <p style="margin: 0; color: var(--text-secondary);">No data sent to servers</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 4rem; text-align: center; padding: 3rem; background: rgba(0, 212, 170, 0.1); border-radius: 16px;">
+                <h2 style="margin-bottom: 1rem;">Ready to Deploy?</h2>
+                <p style="color: var(--text-secondary); margin-bottom: 2rem; font-size: 1.1rem;">
+                    These demos work on any static hosting. Deploy to GitHub Pages, Netlify, or Vercel in minutes!
+                </p>
+                <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                    <a href="documentation.html" class="cta-button">
+                        <i class="fas fa-book"></i> Documentation
+                    </a>
+                    <a href="https://github.com/rdmurugan/openfinops" class="cta-button secondary">
+                        <i class="fab fa-github"></i> View on GitHub
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="logo">
+                        <i class="fas fa-chart-line"></i>
+                        <span>OpenFinOps</span>
+                    </div>
+                    <p>AI/ML Cost Intelligence Platform</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Product</h4>
+                    <ul>
+                        <li><a href="features.html">Features</a></li>
+                        <li><a href="documentation.html">Documentation</a></li>
+                        <li><a href="api.html">API Reference</a></li>
+                        <li><a href="demo-static.html">Demo</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="https://github.com/rdmurugan/openfinops">GitHub</a></li>
+                        <li><a href="https://github.com/rdmurugan/openfinops/issues">Issues</a></li>
+                        <li><a href="documentation.html">Getting Started</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Connect</h4>
+                    <div class="social-links">
+                        <a href="https://github.com/rdmurugan/openfinops"><i class="fab fa-github"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 OpenFinOps. Apache-2.0 License.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

@@ -15,6 +15,23 @@ Features:
 - Automated cost anomaly detection
 """
 
+# Copyright (c) 2025 Infinidatum
+# Author: Duraimurugan Rajamanickam
+# 
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# 
+#     http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+
+
 import json
 import time
 import threading
@@ -36,6 +53,26 @@ class CostCategory(Enum):
     SOFTWARE_LICENSES = "software_licenses"
     DATA_TRANSFER = "data_transfer"
     SUPPORT = "support"
+    # Data Platform Services
+    DATABRICKS = "databricks"
+    DATABRICKS_DBU = "databricks_dbu"
+    DATABRICKS_JOBS = "databricks_jobs"
+    DATABRICKS_SQL = "databricks_sql"
+    SNOWFLAKE = "snowflake"
+    SNOWFLAKE_COMPUTE = "snowflake_compute"
+    SNOWFLAKE_STORAGE = "snowflake_storage"
+    # SaaS Services
+    MONGODB_ATLAS = "mongodb_atlas"
+    REDIS_CLOUD = "redis_cloud"
+    GITHUB_ACTIONS = "github_actions"
+    DATADOG = "datadog"
+    ELASTICSEARCH = "elasticsearch"
+    CONFLUENT_KAFKA = "confluent_kafka"
+    # Database Services
+    DATABASE = "database"
+    DATABASE_COMPUTE = "database_compute"
+    DATABASE_STORAGE = "database_storage"
+    DATABASE_BACKUP = "database_backup"
 
 
 class BudgetStatus(Enum):
